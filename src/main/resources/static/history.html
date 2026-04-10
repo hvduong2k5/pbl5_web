@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>History - Tomato Detection System</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/components.css">
+</head>
+<body>
+    <div id="header-container"></div>
+    <main class="history-layout">
+        <div class="filter-bar">
+            <label for="batch-select">Filter by Batch: </label>
+            <select id="batch-select">
+                <option value="all">All</option>
+            </select>
+        </div>
+        <div class="history-table-container" style="overflow-x: auto;">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Image</th>
+                        <th>Status</th>
+                        <th>Label</th>
+                        <th>Created At</th>
+                        <th>Classified At</th>
+                        <th>Sorted At</th>
+                        <th>Confidence</th>
+                    </tr>
+                </thead>
+                <tbody id="history-body">
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <script src="js/utils/constants.js"></script>
+    <script src="js/utils/helpers.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/components/header.js"></script>
+    <script src="js/pages/history.js"></script>
+</body>
+</html>

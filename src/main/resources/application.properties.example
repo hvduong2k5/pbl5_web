@@ -1,0 +1,30 @@
+# Example application.properties file for detection-tomatoes project
+
+# Server Configuration
+server.port=8080
+
+# Database Configuration
+spring.datasource.url=jdbc:postgresql://localhost:5432/detection_tomatoes
+spring.datasource.username=your_db_username
+spring.datasource.password=your_db_password
+spring.jpa.hibernate.ddl-auto=update
+
+# MQTT Configuration
+mqtt.broker=tcp://localhost:1883
+mqtt.username=your_mqtt_username
+mqtt.password=your_mqtt_password
+mqtt.topic.subscribe=fruit/events
+mqtt.topic.publish=fruit/updates
+
+# MinIO Configuration
+minio.url=http://localhost:9000
+minio.access-key=your_minio_access_key
+minio.secret-key=your_minio_secret_key
+minio.bucket-name=your_bucket_name
+
+# WebSocket Configuration
+websocket.endpoint=/ws
+
+# Logging Configuration
+logging.level.org.springframework=INFO
+logging.level.com.hvduong.detectiontomatoes=DEBUG
