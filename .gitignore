@@ -1,34 +1,34 @@
-HELP.md
-target/
-.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
+# Ignore Maven target directory
+/target/
 
-### STS ###
-.apt_generated
-.classpath
-.factorypath
-.project
-.settings
-.springBeans
-.sts4-cache
-
-### IntelliJ IDEA ###
-.idea
-*.iws
+# Ignore IntelliJ IDEA files
+/.idea/
 *.iml
-*.ipr
-*.properties
 
-### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
-build/
-!**/src/main/**/build/
-!**/src/test/**/build/
+# Ignore logs
+*.log
 
-### VS Code ###
-.vscode/
+# Ignore temporary files
+*.tmp
+*.temp
+
+# Ignore OS-specific files
+.DS_Store
+Thumbs.db
+
+# Ignore application properties
+application.properties
+
+# Ignore Docker files
+*.pid
+
+# Ignore paho directories
+paho*/
+
+# Ignore other unnecessary files
+*.bak
+*.swp
+*.swo
+*.orig
+*.rej
+
