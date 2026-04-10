@@ -1,6 +1,8 @@
 package com.hvduong.detectiontomatoes.repository;
 
 import com.hvduong.detectiontomatoes.model.entity.Fruit;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -9,6 +11,8 @@ import java.util.List;
 
 public interface FruitRepository extends JpaRepository<Fruit, String> {
     List<Fruit> findAllByBatch_Id(Integer batchId);
+    
+    Page<Fruit> findAllByBatch_Id(Integer batchId, Pageable pageable);
     
     long countByBatch_Id(Integer batchId);
     
