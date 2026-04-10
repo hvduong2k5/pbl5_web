@@ -15,8 +15,43 @@ Hệ thống quản lý và giám sát quy trình phân loại tự động cà 
 ## 2. Yêu cầu hệ thống (Prerequisites)
 Để chạy dự án, máy tính của bạn cần cài đặt sẵn:
 - **Java**: JDK 17 trở lên.
+- **Docker** & **Docker Compose** (Dành cho việc chạy nhanh các dịch vụ phụ trợ như DB, MinIO, MQTT).
 - **Maven**: 3.8.1 trở lên.
-- **Docker** & **Docker Compose**.
+
+### Hướng dẫn cài đặt Maven chi tiết
+
+**Đối với Windows:**
+1. Truy cập trang chủ Maven: [https://maven.apache.org/download.cgi](https://maven.apache.org/download.cgi)
+2. Tải xuống file nén `Binary zip archive` (ví dụ: `apache-maven-3.9.6-bin.zip`).
+3. Giải nén file vừa tải vào một thư mục cố định trên máy (ví dụ: `C:\Program Files\apache-maven-3.9.6`).
+4. Thiết lập biến môi trường (Environment Variables):
+   - Mở Start Menu, gõ **Environment Variables** và chọn *Edit the system environment variables*.
+   - Bấm nút **Environment Variables...**.
+   - Ở phần *System variables*, bấm **New...** tạo biến mới:
+     - Variable name: `M2_HOME`
+     - Variable value: `C:\Program Files\apache-maven-3.9.6`
+   - Tìm biến `Path` trong danh sách *System variables*, chọn **Edit** -> **New** và thêm dòng: `%M2_HOME%\bin`
+   - Nhấn OK để lưu tất cả.
+5. Kiểm tra lại bằng cách mở Command Prompt (cmd) và gõ:
+   ```cmd
+   mvn -v
+   ```
+   *(Nếu hiện ra phiên bản Maven và Java là thành công).*
+
+**Đối với macOS (dùng Homebrew):**
+Mở Terminal và chạy lệnh:
+```bash
+brew install maven
+```
+Kiểm tra lại: `mvn -v`
+
+**Đối với Linux (Ubuntu/Debian):**
+Mở Terminal và chạy lệnh:
+```bash
+sudo apt update
+sudo apt install maven
+```
+Kiểm tra lại: `mvn -v`
 
 ---
 
@@ -44,48 +79,44 @@ mqtt.username=admin
 mqtt.password=admin
 mqtt.topic.subscribe=tomato/events
 ```
-*(Nếu bạn sử dụng Docker Compose, hãy đổi `localhost` thành tên các container tương ứng như `db`, `minio`, `mqtt`).*
+*(Nếu bạn sử dụng Docker Compose để chạy toàn bộ, hãy đổi `localhost` thành tên các container tương ứng như `db`, `minio`, `mqtt`).*
 
 ---
 
 ## 4. Hướng dẫn chạy dự án
 
-### 4.1. Build file JAR
+Có 2 cách để chạy hệ thống:
 
-1. Cài đặt Maven (nếu chưa có):
-   - Tải Maven từ [https://maven.apache.org/download.cgi](https://maven.apache.org/download.cgi).
-   - Giải nén và thêm đường dẫn `bin` của Maven vào biến môi trường `PATH`.
-   - Kiểm tra cài đặt bằng lệnh:
-     ```
-     mvn -v
-     ```
+### Cách 1: Chạy trực tiếp bằng Maven (Dành cho Dev)
+Nếu bạn đã tự cài đặt và chạy PostgreSQL, MinIO, và MQTT trên máy cá nhân:
+1. Mở Terminal (hoặc CMD) tại thư mục gốc của project (nơi chứa file `pom.xml`).
+2. Build và chạy ứng dụng Spring Boot:
+   ```bash
+   mvn clean spring-boot:run
+   ```
 
-2. Build dự án:
+### Cách 2: Chạy toàn bộ hệ thống bằng Docker Compose (Khuyên dùng)
+Nếu file `docker-compose.yml` của bạn đã định nghĩa đầy đủ các services (Spring Boot, DB, MQTT, MinIO):
+1. Build file JAR của Backend trước (bỏ qua Test để build nhanh):
+   ```bash
+   mvn clean package -DskipTests
    ```
-   ./mvnw clean package
+2. Khởi chạy toàn bộ hệ thống bằng Docker Compose:
+   ```bash
+   docker-compose up --build -d
    ```
-   File JAR sẽ được tạo trong thư mục `target/`.
-
-### 4.2. Chạy ứng dụng với Docker
-
-1. Đảm bảo Docker và Docker Compose đã được cài đặt.
-2. Cấu hình file `application.properties` dựa trên file mẫu `application.properties.example`.
-3. Chạy lệnh sau để khởi động ứng dụng:
+3. Xem log của hệ thống để đảm bảo mọi thứ hoạt động ổn định:
+   ```bash
+   docker-compose logs -f
    ```
-   docker-compose up --build
+4. Để tắt hệ thống, chạy lệnh:
+   ```bash
+   docker-compose down
    ```
-4. Truy cập ứng dụng tại [http://localhost:8080](http://localhost:8080).
 
 ---
 
-## 5. Chú ý
-
-- Đảm bảo các dịch vụ MinIO và MQTT Broker đã chạy trước khi khởi động ứng dụng.
-- Nếu cần thay đổi cấu hình, chỉnh sửa file `application.properties` hoặc các biến môi trường trong `docker-compose.yml`.
-
----
-
-## 6. Sử dụng hệ thống
+## 5. Sử dụng hệ thống
 
 Sau khi khởi động thành công, hệ thống cung cấp các giao diện chính sau:
 
@@ -99,7 +130,7 @@ Sau khi khởi động thành công, hệ thống cung cấp các giao diện ch
 
 3. **API Nhận dữ liệu từ AI (Dành cho AI Server)**
    - Endpoint: `POST /api/fruit`
-   - Payload mẫu:
+   - Payload mẫu (Ví dụ code Python gửi sang):
      ```json
      {
          "id": "CAM1_123",
