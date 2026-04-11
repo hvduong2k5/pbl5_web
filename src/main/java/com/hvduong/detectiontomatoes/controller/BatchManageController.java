@@ -4,8 +4,12 @@ import com.hvduong.detectiontomatoes.model.entity.Batch;
 import com.hvduong.detectiontomatoes.repository.BatchRepository;
 import com.hvduong.detectiontomatoes.model.entity.SystemConfig;
 import com.hvduong.detectiontomatoes.repository.SystemConfigRepository;
+import com.hvduong.detectiontomatoes.service.FruitExportService;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -17,10 +21,12 @@ import java.util.stream.Collectors;
 public class BatchManageController {
     private final BatchRepository batchRepository;
     private final SystemConfigRepository systemConfigRepository;
+    private final FruitExportService fruitExportService;
 
-    public BatchManageController(BatchRepository batchRepository, SystemConfigRepository systemConfigRepository) {
+    public BatchManageController(BatchRepository batchRepository, SystemConfigRepository systemConfigRepository, FruitExportService fruitExportService) {
         this.batchRepository = batchRepository;
         this.systemConfigRepository = systemConfigRepository;
+        this.fruitExportService = fruitExportService;
     }
 
     private Map<String, Object> toBatchMap(Batch batch) {
@@ -54,6 +60,16 @@ public class BatchManageController {
             return ResponseEntity.ok(toBatchMap(config.getCurrentBatch()));
         }
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/current/export")
+    public void exportCurrentBatchToExcel(HttpServletResponse response) throws IOException {
+        SystemConfig config = systemConfigRepository.findById(1).orElse(null);
+        if (config != null && config.getCurrentBatch() != null) {
+            fruitExportService.exportFruitsByBatch(config.getCurrentBatch().getId(), response);
+        } else {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND, "No active batch found");
+        }
     }
 
     @GetMapping("/all")
