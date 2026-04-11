@@ -57,5 +57,14 @@ const API = {
             body: JSON.stringify(command)
         });
         return res.ok;
+    },
+    async exportBatch(batchId) {
+        console.log(`[DEBUG API] Gọi GET /api/batch/${batchId}/export`);
+        const res = await fetch(`${API_BASE_URL}/batch/${batchId}/export`);
+        if (!res.ok) {
+            console.error(`[DEBUG API] Lỗi HTTP ${res.status} khi tải Excel`);
+            throw new Error(`HTTP error! status: ${res.status}`);
+        }
+        return res.blob();
     }
 };

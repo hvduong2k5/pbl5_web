@@ -2,6 +2,7 @@ async function initHistoryPage() {
     console.log('[DEBUG History] Bắt đầu initHistoryPage...');
     const batchSelect = document.getElementById('batch-select');
     const historyBody = document.getElementById('history-body');
+    const btnExport = document.getElementById('btn-export');
     
     // Render header ngay lập tức để tránh giao diện bị trống
     renderHeader(window.location.pathname, null);
@@ -64,6 +65,45 @@ async function initHistoryPage() {
         }
     }
     
+    if (btnExport) {
+        btnExport.addEventListener('click', async () => {
+            const val = batchSelect.value;
+            if (val === 'all') {
+                alert('Vui lòng chọn một Batch cụ thể để xuất dữ liệu.');
+                return;
+            }
+
+            const originalText = btnExport.textContent;
+            btnExport.textContent = 'Đang xử lý...';
+            btnExport.disabled = true;
+            btnExport.style.opacity = '0.7';
+
+            try {
+                const blob = await API.exportBatch(val);
+                
+                // Tạo link tải file ảo
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `Batch_${val}_Export.xlsx`;
+                document.body.appendChild(a);
+                a.click();
+                
+                // Dọn dẹp memory
+                window.URL.revokeObjectURL(url);
+                a.remove();
+                console.log('[DEBUG History] Tải file Excel thành công.');
+            } catch (e) {
+                console.error('[ERROR History] Lỗi khi tải Excel:', e);
+                alert('Có lỗi xảy ra khi xuất file Excel. Vui lòng kiểm tra lại cấu hình MinIO hoặc API.');
+            } finally {
+                btnExport.textContent = originalText;
+                btnExport.disabled = false;
+                btnExport.style.opacity = '1';
+            }
+        });
+    }
+
     batchSelect.addEventListener('change', loadHistory);
     loadHistory();
 }
