@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
@@ -37,6 +38,7 @@ public class FruitExportService {
         this.minioClient = minioClient;
     }
 
+    @PreAuthorize("hasAuthority('EXPORT_DATA')")
     public void exportFruitsByBatch(Integer batchId, HttpServletResponse response) throws IOException {
         System.out.println("[Export] Bắt đầu xuất Excel cho Batch ID = " + batchId);
         response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
