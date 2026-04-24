@@ -4,6 +4,7 @@ import com.hvduong.detectiontomatoes.model.dto.ControlCommandDTO;
 import com.hvduong.detectiontomatoes.mqtt.MqttPublisher;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -17,6 +18,7 @@ public class ControlController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAuthority('CONTROL_SYSTEM')")
     public ResponseEntity<Void> control(@RequestBody ControlCommandDTO dto) {
         try {
             String payload = objectMapper.writeValueAsString(dto);
