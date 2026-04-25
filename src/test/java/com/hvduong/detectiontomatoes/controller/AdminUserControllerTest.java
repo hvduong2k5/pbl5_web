@@ -3,6 +3,7 @@ package com.hvduong.detectiontomatoes.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hvduong.detectiontomatoes.model.dto.UserCreateDTO;
 import com.hvduong.detectiontomatoes.model.dto.UserResponseDTO;
+import com.hvduong.detectiontomatoes.model.dto.UserRolesUpdateDTO;
 import com.hvduong.detectiontomatoes.model.dto.UserUpdateDTO;
 import com.hvduong.detectiontomatoes.security.CustomUserDetailsService;
 import com.hvduong.detectiontomatoes.security.JwtTokenProvider;
@@ -65,7 +66,7 @@ public class AdminUserControllerTest {
     }
 
     @Test
-    @WithMockUser(roles = "ADMIN")
+    @WithMockUser(roles = "ADMIN", username = "adminUser")
     void testGetAllUsers() throws Exception {
         Mockito.when(userService.getAllUsers()).thenReturn(Collections.singletonList(mockUserResponse));
 
@@ -76,7 +77,7 @@ public class AdminUserControllerTest {
     }
 
     @Test
-    @WithMockUser(roles = "ADMIN")
+    @WithMockUser(roles = "ADMIN", username = "adminUser")
     void testCreateUser_Success() throws Exception {
         UserCreateDTO dto = new UserCreateDTO();
         dto.setUsername("newuser");
@@ -102,7 +103,7 @@ public class AdminUserControllerTest {
     }
 
     @Test
-    @WithMockUser(roles = "ADMIN")
+    @WithMockUser(roles = "ADMIN", username = "adminUser")
     void testCreateUser_Conflict() throws Exception {
         UserCreateDTO dto = new UserCreateDTO();
         dto.setUsername("testuser"); // Already exists
@@ -119,7 +120,7 @@ public class AdminUserControllerTest {
     }
 
     @Test
-    @WithMockUser(roles = "ADMIN")
+    @WithMockUser(roles = "ADMIN", username = "adminUser")
     void testUpdateUser_Success() throws Exception {
         UserUpdateDTO dto = new UserUpdateDTO();
         dto.setEnabled(false);
@@ -131,7 +132,7 @@ public class AdminUserControllerTest {
                 .roles(Set.of("OPERATOR"))
                 .build();
 
-        Mockito.when(userService.updateUser(eq(1), any(UserUpdateDTO.class))).thenReturn(updatedUserResponse);
+        Mockito.when(userService.updateUser(eq(1), any(UserUpdateDTO.class), eq("adminUser"))).thenReturn(updatedUserResponse);
 
         mockMvc.perform(put("/api/admin/users/1")
                         .with(csrf())
@@ -142,9 +143,48 @@ public class AdminUserControllerTest {
     }
 
     @Test
-    @WithMockUser(roles = "ADMIN")
+    @WithMockUser(roles = "ADMIN", username = "adminUser")
+    void testUpdateUserRoles_Success() throws Exception {
+        UserRolesUpdateDTO dto = new UserRolesUpdateDTO();
+        dto.setRoles(Set.of("OPERATOR", "ADMIN"));
+
+        UserResponseDTO updatedUserResponse = UserResponseDTO.builder()
+                .id(2)
+                .username("anotheruser")
+                .enabled(true)
+                .roles(Set.of("OPERATOR", "ADMIN"))
+                .build();
+
+        Mockito.when(userService.updateUserRoles(eq(2), any(UserRolesUpdateDTO.class), eq("adminUser"))).thenReturn(updatedUserResponse);
+
+        mockMvc.perform(put("/api/admin/users/2/roles")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.roles[0]").exists());
+    }
+
+    @Test
+    @WithMockUser(roles = "ADMIN", username = "adminUser")
+    void testUpdateUserRoles_SelfLockout() throws Exception {
+        UserRolesUpdateDTO dto = new UserRolesUpdateDTO();
+        dto.setRoles(Set.of("OPERATOR")); // Removed ADMIN role
+
+        Mockito.when(userService.updateUserRoles(eq(1), any(UserRolesUpdateDTO.class), eq("adminUser")))
+                .thenThrow(new IllegalArgumentException("Bạn không thể tự xóa quyền ADMIN của chính mình."));
+
+        mockMvc.perform(put("/api/admin/users/1/roles")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @WithMockUser(roles = "ADMIN", username = "adminUser")
     void testDeleteUser_Success() throws Exception {
-        Mockito.doNothing().when(userService).deleteUser(1);
+        Mockito.doNothing().when(userService).deleteUser(1, "adminUser");
 
         mockMvc.perform(delete("/api/admin/users/1").with(csrf()))
                 .andExpect(status().isOk());
