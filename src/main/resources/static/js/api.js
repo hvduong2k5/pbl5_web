@@ -115,9 +115,9 @@ const API = {
 
     // --- Admin APIs ---
 
-    async getAllUsers() {
-        console.log('[DEBUG API] Gọi GET /api/admin/users');
-        const res = await this.fetchWithAuth(`${API_BASE_URL}/admin/users`);
+    async getAllUsers(page = 0, size = 10) {
+        console.log(`[DEBUG API] Gọi GET /api/admin/users?page=${page}&size=${size}`);
+        const res = await this.fetchWithAuth(`${API_BASE_URL}/admin/users?page=${page}&size=${size}`);
         if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
         return res.json();
     },
@@ -183,9 +183,9 @@ const API = {
         return res.json();
     },
 
-    async getAllRoles() {
-        console.log('[DEBUG API] Gọi GET /api/admin/roles');
-        const res = await this.fetchWithAuth(`${API_BASE_URL}/admin/roles`);
+    async getAllRoles(page = 0, size = 10) {
+        console.log(`[DEBUG API] Gọi GET /api/admin/roles?page=${page}&size=${size}`);
+        const res = await this.fetchWithAuth(`${API_BASE_URL}/admin/roles?page=${page}&size=${size}`);
         if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
         return res.json();
     },
