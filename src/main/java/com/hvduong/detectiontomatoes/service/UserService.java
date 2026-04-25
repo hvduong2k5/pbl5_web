@@ -2,6 +2,7 @@ package com.hvduong.detectiontomatoes.service;
 
 import com.hvduong.detectiontomatoes.model.dto.UserCreateDTO;
 import com.hvduong.detectiontomatoes.model.dto.UserResponseDTO;
+import com.hvduong.detectiontomatoes.model.dto.UserRolesUpdateDTO;
 import com.hvduong.detectiontomatoes.model.dto.UserUpdateDTO;
 import com.hvduong.detectiontomatoes.model.entity.Role;
 import com.hvduong.detectiontomatoes.model.entity.User;
@@ -68,19 +69,30 @@ public class UserService {
     }
 
     @Transactional
-    public UserResponseDTO updateUser(Integer id, UserUpdateDTO dto) {
+    public UserResponseDTO updateUser(Integer id, UserUpdateDTO dto, String currentUsername) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy người dùng với ID: " + id));
+
+        boolean isSelf = user.getUsername().equals(currentUsername);
 
         if (dto.getPassword() != null && !dto.getPassword().isEmpty()) {
             user.setPassword(passwordEncoder.encode(dto.getPassword()));
         }
 
         if (dto.getEnabled() != null) {
+            if (isSelf && !dto.getEnabled()) {
+                throw new IllegalArgumentException("Bạn không thể tự khóa (disable) tài khoản của chính mình.");
+            }
             user.setEnabled(dto.getEnabled());
         }
 
         if (dto.getRoles() != null) {
+            if (isSelf) {
+                boolean hasAdminRole = dto.getRoles().stream().anyMatch(r -> r.equalsIgnoreCase("ADMIN"));
+                if (!hasAdminRole) {
+                    throw new IllegalArgumentException("Bạn không thể tự xóa quyền ADMIN của chính mình.");
+                }
+            }
             Set<Role> roles = new HashSet<>();
             for (String roleName : dto.getRoles()) {
                 roleRepository.findByName(roleName.toUpperCase()).ifPresent(roles::add);
@@ -93,10 +105,38 @@ public class UserService {
     }
 
     @Transactional
-    public void deleteUser(Integer id) {
-        if (!userRepository.existsById(id)) {
-            throw new IllegalArgumentException("Không tìm thấy người dùng với ID: " + id);
+    public UserResponseDTO updateUserRoles(Integer id, UserRolesUpdateDTO dto, String currentUsername) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy người dùng với ID: " + id));
+
+        boolean isSelf = user.getUsername().equals(currentUsername);
+
+        if (isSelf) {
+            boolean hasAdminRole = dto.getRoles().stream().anyMatch(r -> r.equalsIgnoreCase("ADMIN"));
+            if (!hasAdminRole) {
+                throw new IllegalArgumentException("Bạn không thể tự xóa quyền ADMIN của chính mình.");
+            }
         }
+
+        Set<Role> roles = new HashSet<>();
+        for (String roleName : dto.getRoles()) {
+            roleRepository.findByName(roleName.toUpperCase()).ifPresent(roles::add);
+        }
+        user.setRoles(roles);
+
+        User updatedUser = userRepository.save(user);
+        return mapToResponse(updatedUser);
+    }
+
+    @Transactional
+    public void deleteUser(Integer id, String currentUsername) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy người dùng với ID: " + id));
+        
+        if (user.getUsername().equals(currentUsername)) {
+            throw new IllegalArgumentException("Bạn không thể tự xóa tài khoản của chính mình.");
+        }
+
         userRepository.deleteById(id);
     }
 }
