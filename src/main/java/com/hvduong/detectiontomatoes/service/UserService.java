@@ -42,7 +42,10 @@ public class UserService {
                 .build();
     }
 
-    public Page<UserResponseDTO> getAllUsers(Pageable pageable) {
+    public Page<UserResponseDTO> getAllUsers(String keyword, Pageable pageable) {
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            return userRepository.findByUsernameContainingIgnoreCase(keyword.trim(), pageable).map(this::mapToResponse);
+        }
         return userRepository.findAll(pageable).map(this::mapToResponse);
     }
 
