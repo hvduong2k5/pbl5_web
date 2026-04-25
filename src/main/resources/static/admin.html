@@ -7,6 +7,18 @@
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/layout.css">
     <link rel="stylesheet" href="css/components.css">
+    <style>
+        .pagination-container {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            margin-top: 10px;
+            gap: 10px;
+        }
+        .pagination-container span {
+            font-size: 0.9em;
+        }
+    </style>
 </head>
 <body>
     <div id="header-container"></div>
@@ -33,6 +45,11 @@
                 </tbody>
             </table>
         </div>
+        <div class="pagination-container">
+            <button id="btn-user-prev" class="btn btn-secondary" style="width: auto; margin: 0; padding: 4px 10px;" disabled>Prev</button>
+            <span id="user-page-info">Page 1 of 1</span>
+            <button id="btn-user-next" class="btn btn-secondary" style="width: auto; margin: 0; padding: 4px 10px;" disabled>Next</button>
+        </div>
 
         <hr style="margin: 30px 0; border: 0; border-top: 1px solid var(--border-color);">
 
@@ -55,6 +72,11 @@
                 <tbody id="role-body">
                 </tbody>
             </table>
+        </div>
+        <div class="pagination-container">
+            <button id="btn-role-prev" class="btn btn-secondary" style="width: auto; margin: 0; padding: 4px 10px;" disabled>Prev</button>
+            <span id="role-page-info">Page 1 of 1</span>
+            <button id="btn-role-next" class="btn btn-secondary" style="width: auto; margin: 0; padding: 4px 10px;" disabled>Next</button>
         </div>
 
         <!-- Modals -->
