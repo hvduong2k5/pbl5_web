@@ -8,12 +8,13 @@ import com.hvduong.detectiontomatoes.model.entity.Role;
 import com.hvduong.detectiontomatoes.model.entity.User;
 import com.hvduong.detectiontomatoes.repository.RoleRepository;
 import com.hvduong.detectiontomatoes.repository.UserRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -41,8 +42,8 @@ public class UserService {
                 .build();
     }
 
-    public List<UserResponseDTO> getAllUsers() {
-        return userRepository.findAll().stream().map(this::mapToResponse).collect(Collectors.toList());
+    public Page<UserResponseDTO> getAllUsers(Pageable pageable) {
+        return userRepository.findAll(pageable).map(this::mapToResponse);
     }
 
     @Transactional
@@ -75,7 +76,7 @@ public class UserService {
 
         boolean isSelf = user.getUsername().equals(currentUsername);
 
-        if (dto.getPassword() != null && !dto.getPassword().isEmpty()) {
+        if (dto.getPassword() != null && !dto.getPassword().trim().isEmpty()) {
             user.setPassword(passwordEncoder.encode(dto.getPassword()));
         }
 
