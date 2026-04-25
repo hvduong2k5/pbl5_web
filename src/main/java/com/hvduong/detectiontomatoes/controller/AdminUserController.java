@@ -30,9 +30,10 @@ public class AdminUserController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<UserResponseDTO>> getAllUsers(@RequestParam(defaultValue = "0") int page,
+    public ResponseEntity<Page<UserResponseDTO>> getAllUsers(@RequestParam(required = false) String keyword,
+                                                             @RequestParam(defaultValue = "0") int page,
                                                              @RequestParam(defaultValue = "10") int size) {
-        return ResponseEntity.ok(userService.getAllUsers(PageRequest.of(page, size)));
+        return ResponseEntity.ok(userService.getAllUsers(keyword, PageRequest.of(page, size)));
     }
 
     @PostMapping
