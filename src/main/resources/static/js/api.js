@@ -115,9 +115,16 @@ const API = {
 
     // --- Admin APIs ---
 
-    async getAllUsers(page = 0, size = 10) {
-        console.log(`[DEBUG API] Gọi GET /api/admin/users?page=${page}&size=${size}`);
-        const res = await this.fetchWithAuth(`${API_BASE_URL}/admin/users?page=${page}&size=${size}`);
+    async getAllUsers(keyword = '', page = 0, size = 10) {
+        console.log(`[DEBUG API] Gọi GET /api/admin/users?keyword=${keyword}&page=${page}&size=${size}`);
+        const url = new URL(`${window.location.origin}${API_BASE_URL}/admin/users`);
+        url.searchParams.append('page', page);
+        url.searchParams.append('size', size);
+        if (keyword) {
+            url.searchParams.append('keyword', keyword);
+        }
+        
+        const res = await this.fetchWithAuth(url.toString());
         if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
         return res.json();
     },
