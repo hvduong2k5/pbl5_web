@@ -18,6 +18,18 @@
         .pagination-container span {
             font-size: 0.9em;
         }
+        .search-bar {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .search-bar input {
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 0.9em;
+            width: 250px;
+        }
     </style>
 </head>
 <body>
@@ -26,7 +38,13 @@
 
         <!-- User Management -->
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-            <h2>User Management</h2>
+            <div style="display: flex; align-items: center; gap: 20px;">
+                <h2>User Management</h2>
+                <div class="search-bar">
+                    <input type="text" id="user-search-input" placeholder="Tìm kiếm Username..." />
+                    <button id="btn-user-search" class="btn btn-secondary" style="width: auto; margin: 0; padding: 8px 15px;">Tìm</button>
+                </div>
+            </div>
             <button id="btn-add-user" class="btn btn-primary" style="width: auto; margin: 0; padding: 8px 15px;">Add New User</button>
         </div>
         <div class="history-table-container" style="overflow-x: auto;">
