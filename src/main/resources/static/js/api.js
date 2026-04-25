@@ -111,5 +111,89 @@ const API = {
             throw new Error(`HTTP error! status: ${res.status}`);
         }
         return res.blob();
+    },
+
+    // --- Admin APIs ---
+
+    async getAllUsers() {
+        console.log('[DEBUG API] Gọi GET /api/admin/users');
+        const res = await this.fetchWithAuth(`${API_BASE_URL}/admin/users`);
+        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+        return res.json();
+    },
+
+    async createUser(userDto) {
+        console.log('[DEBUG API] Gọi POST /api/admin/users');
+        const res = await this.fetchWithAuth(`${API_BASE_URL}/admin/users`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(userDto)
+        });
+        if (!res.ok) {
+            const msg = await res.text();
+            throw new Error(msg || 'Lỗi khi tạo user');
+        }
+        return res.json();
+    },
+
+    async updateUser(id, updateDto) {
+        console.log(`[DEBUG API] Gọi PUT /api/admin/users/${id}`);
+        const res = await this.fetchWithAuth(`${API_BASE_URL}/admin/users/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(updateDto)
+        });
+        if (!res.ok) {
+            const msg = await res.text();
+            throw new Error(msg || 'Lỗi khi cập nhật user');
+        }
+        return res.json();
+    },
+
+    async updateUserRoles(id, rolesList) {
+        console.log(`[DEBUG API] Gọi PUT /api/admin/users/${id}/roles`);
+        const res = await this.fetchWithAuth(`${API_BASE_URL}/admin/users/${id}/roles`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ roles: rolesList })
+        });
+        if (!res.ok) {
+            const msg = await res.text();
+            throw new Error(msg || 'Lỗi khi cập nhật roles');
+        }
+        return res.json();
+    },
+
+    async deleteUser(id) {
+        console.log(`[DEBUG API] Gọi DELETE /api/admin/users/${id}`);
+        const res = await this.fetchWithAuth(`${API_BASE_URL}/admin/users/${id}`, {
+            method: 'DELETE'
+        });
+        if (!res.ok) {
+            const msg = await res.text();
+            throw new Error(msg || 'Lỗi khi xóa user');
+        }
+        return res.text();
+    },
+
+    async getAllPermissions() {
+        console.log('[DEBUG API] Gọi GET /api/admin/permissions');
+        const res = await this.fetchWithAuth(`${API_BASE_URL}/admin/permissions`);
+        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+        return res.json();
+    },
+
+    async createRole(roleDto) {
+        console.log('[DEBUG API] Gọi POST /api/admin/roles');
+        const res = await this.fetchWithAuth(`${API_BASE_URL}/admin/roles`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(roleDto)
+        });
+        if (!res.ok) {
+            const msg = await res.text();
+            throw new Error(msg || 'Lỗi khi tạo role');
+        }
+        return res.json();
     }
 };
