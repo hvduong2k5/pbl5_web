@@ -38,7 +38,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/ws/**").permitAll()
-                        .requestMatchers("/", "/index.html", "/history.html", "/login.html", "/css/**", "/js/**", "/images/**", "/favicon.ico").permitAll()
+                        .requestMatchers("/", "/index.html", "/history.html", "/login.html", "/admin.html", "/css/**", "/js/**", "/images/**", "/favicon.ico").permitAll()
                         // Cho phép AI Server (chưa có chức năng gắn token) gửi dữ liệu POST:
                         .requestMatchers("/api/fruit").permitAll()
                         .anyRequest().authenticated()
