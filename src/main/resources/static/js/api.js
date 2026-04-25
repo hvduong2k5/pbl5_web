@@ -183,6 +183,13 @@ const API = {
         return res.json();
     },
 
+    async getAllRoles() {
+        console.log('[DEBUG API] Gọi GET /api/admin/roles');
+        const res = await this.fetchWithAuth(`${API_BASE_URL}/admin/roles`);
+        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+        return res.json();
+    },
+
     async createRole(roleDto) {
         console.log('[DEBUG API] Gọi POST /api/admin/roles');
         const res = await this.fetchWithAuth(`${API_BASE_URL}/admin/roles`, {
@@ -195,5 +202,31 @@ const API = {
             throw new Error(msg || 'Lỗi khi tạo role');
         }
         return res.json();
+    },
+
+    async updateRole(id, roleDto) {
+        console.log(`[DEBUG API] Gọi PUT /api/admin/roles/${id}`);
+        const res = await this.fetchWithAuth(`${API_BASE_URL}/admin/roles/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(roleDto)
+        });
+        if (!res.ok) {
+            const msg = await res.text();
+            throw new Error(msg || 'Lỗi khi cập nhật role');
+        }
+        return res.json();
+    },
+
+    async deleteRole(id) {
+        console.log(`[DEBUG API] Gọi DELETE /api/admin/roles/${id}`);
+        const res = await this.fetchWithAuth(`${API_BASE_URL}/admin/roles/${id}`, {
+            method: 'DELETE'
+        });
+        if (!res.ok) {
+            const msg = await res.text();
+            throw new Error(msg || 'Lỗi khi xóa role');
+        }
+        return res.text();
     }
 };
