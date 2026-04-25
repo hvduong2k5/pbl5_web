@@ -17,6 +17,14 @@ async function initAdminPage() {
     let allRoles = [];
     let allKnownRoles = new Set(); // Sẽ được cập nhật từ API roles
 
+    // Pagination states
+    let userPage = 0;
+    let userTotalPages = 1;
+    const size = 10;
+
+    let rolePage = 0;
+    let roleTotalPages = 1;
+
     // Load data
     await loadPermissions();
     await loadRoles();
@@ -27,6 +35,46 @@ async function initAdminPage() {
     const roleModal = document.getElementById('role-modal');
     const userForm = document.getElementById('user-form');
     const roleForm = document.getElementById('role-form');
+
+    // Pagination elements
+    const btnUserPrev = document.getElementById('btn-user-prev');
+    const btnUserNext = document.getElementById('btn-user-next');
+    const btnRolePrev = document.getElementById('btn-role-prev');
+    const btnRoleNext = document.getElementById('btn-role-next');
+
+    // --- Pagination Event Listeners ---
+    if (btnUserPrev) {
+        btnUserPrev.addEventListener('click', async () => {
+            if (userPage > 0) {
+                userPage--;
+                await loadUsers();
+            }
+        });
+    }
+    if (btnUserNext) {
+        btnUserNext.addEventListener('click', async () => {
+            if (userPage < userTotalPages - 1) {
+                userPage++;
+                await loadUsers();
+            }
+        });
+    }
+    if (btnRolePrev) {
+        btnRolePrev.addEventListener('click', async () => {
+            if (rolePage > 0) {
+                rolePage--;
+                await loadRoles();
+            }
+        });
+    }
+    if (btnRoleNext) {
+        btnRoleNext.addEventListener('click', async () => {
+            if (rolePage < roleTotalPages - 1) {
+                rolePage++;
+                await loadRoles();
+            }
+        });
+    }
 
     // Nút mở modal tạo user
     document.getElementById('btn-add-user').addEventListener('click', () => {
@@ -129,7 +177,16 @@ async function initAdminPage() {
 
     async function loadRoles() {
         try {
-            allRoles = await API.getAllRoles();
+            const pageData = await API.getAllRoles(rolePage, size);
+            allRoles = pageData.content || pageData; // Fallback in case backend returns list instead of Page
+            roleTotalPages = pageData.totalPages || 1;
+            
+            if (document.getElementById('role-page-info')) {
+                document.getElementById('role-page-info').textContent = `Page ${rolePage + 1} of ${roleTotalPages}`;
+                btnRolePrev.disabled = rolePage === 0;
+                btnRoleNext.disabled = rolePage >= roleTotalPages - 1;
+            }
+
             allKnownRoles.clear();
             roleBody.innerHTML = '';
             
@@ -165,7 +222,16 @@ async function initAdminPage() {
 
     async function loadUsers() {
         try {
-            allUsers = await API.getAllUsers();
+            const pageData = await API.getAllUsers(userPage, size);
+            allUsers = pageData.content || pageData;
+            userTotalPages = pageData.totalPages || 1;
+
+            if (document.getElementById('user-page-info')) {
+                document.getElementById('user-page-info').textContent = `Page ${userPage + 1} of ${userTotalPages}`;
+                btnUserPrev.disabled = userPage === 0;
+                btnUserNext.disabled = userPage >= userTotalPages - 1;
+            }
+
             userBody.innerHTML = '';
             
             allUsers.forEach(u => {
