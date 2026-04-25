@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -68,12 +69,12 @@ public class AdminUserControllerTest {
     @Test
     @WithMockUser(roles = "ADMIN", username = "adminUser")
     void testGetAllUsers() throws Exception {
-        Mockito.when(userService.getAllUsers()).thenReturn(Collections.singletonList(mockUserResponse));
+        Mockito.when(userService.getAllUsers(any(), any())).thenReturn(new PageImpl<>(Collections.singletonList(mockUserResponse)));
 
         mockMvc.perform(get("/api/admin/users"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].username").value("testuser"))
-                .andExpect(jsonPath("$[0].roles[0]").value("OPERATOR"));
+                .andExpect(jsonPath("$.content[0].username").value("testuser"))
+                .andExpect(jsonPath("$.content[0].roles[0]").value("OPERATOR"));
     }
 
     @Test
