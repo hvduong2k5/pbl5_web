@@ -20,6 +20,7 @@ async function initAdminPage() {
     // Pagination states
     let userPage = 0;
     let userTotalPages = 1;
+    let userKeyword = '';
     const size = 10;
 
     let rolePage = 0;
@@ -37,10 +38,33 @@ async function initAdminPage() {
     const btnRolePrev = document.getElementById('btn-role-prev');
     const btnRoleNext = document.getElementById('btn-role-next');
 
+    // Search elements
+    const userSearchInput = document.getElementById('user-search-input');
+    const btnUserSearch = document.getElementById('btn-user-search');
+
     // Load data
     await loadPermissions();
     await loadRoles();
     await loadUsers();
+
+    // --- Search Event Listeners ---
+    if (btnUserSearch) {
+        btnUserSearch.addEventListener('click', async () => {
+            userKeyword = userSearchInput.value.trim();
+            userPage = 0; // Reset về trang 1 khi search mới
+            await loadUsers();
+        });
+    }
+
+    if (userSearchInput) {
+        userSearchInput.addEventListener('keypress', async (e) => {
+            if (e.key === 'Enter') {
+                userKeyword = userSearchInput.value.trim();
+                userPage = 0;
+                await loadUsers();
+            }
+        });
+    }
 
     // --- Pagination Event Listeners ---
     if (btnUserPrev) {
@@ -222,7 +246,7 @@ async function initAdminPage() {
 
     async function loadUsers() {
         try {
-            const pageData = await API.getAllUsers(userPage, size);
+            const pageData = await API.getAllUsers(userKeyword, userPage, size);
             allUsers = pageData.content || pageData;
             userTotalPages = pageData.totalPages || 1;
 
@@ -233,6 +257,11 @@ async function initAdminPage() {
             }
 
             userBody.innerHTML = '';
+            
+            if (allUsers.length === 0) {
+                userBody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #666;">Không tìm thấy người dùng nào.</td></tr>`;
+                return;
+            }
             
             allUsers.forEach(u => {
                 const tr = document.createElement('tr');
