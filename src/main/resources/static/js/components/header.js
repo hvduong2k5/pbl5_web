@@ -4,11 +4,13 @@ function renderHeader(currentPath, currentBatchName) {
     
     const isHome = currentPath === 'home' || currentPath === '/' || currentPath.endsWith('index.html');
     const isHistory = currentPath.endsWith('history.html');
+    const isAdmin = currentPath.endsWith('admin.html');
     const isLogin = currentPath.endsWith('login.html');
     
     const token = localStorage.getItem('accessToken');
     let userMenuHtml = '';
-    
+    let adminLinkHtml = '';
+
     if (token && !isLogin) {
         try {
             // Giải mã JWT để lấy username (tùy chọn)
@@ -27,6 +29,10 @@ function renderHeader(currentPath, currentBatchName) {
                     </div>
                 </div>
             `;
+
+            if (hasAuthority('ROLE_ADMIN')) {
+                adminLinkHtml = `<a href="/admin.html" class="${isAdmin ? 'active' : ''}">Admin Console</a>`;
+            }
         } catch (e) {
             console.error('Không thể giải mã token', e);
         }
@@ -37,6 +43,7 @@ function renderHeader(currentPath, currentBatchName) {
             <div class="nav-links">
                 <a href="/" class="${isHome ? 'active' : ''}">Home</a>
                 <a href="/history.html" class="${isHistory ? 'active' : ''}">History</a>
+                ${adminLinkHtml}
             </div>
             <div class="header-right">
                 <div class="current-batch">
