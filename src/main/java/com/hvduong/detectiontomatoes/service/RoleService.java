@@ -8,6 +8,8 @@ import com.hvduong.detectiontomatoes.model.entity.Permission;
 import com.hvduong.detectiontomatoes.model.entity.Role;
 import com.hvduong.detectiontomatoes.repository.PermissionRepository;
 import com.hvduong.detectiontomatoes.repository.RoleRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,10 +34,8 @@ public class RoleService {
                 .collect(Collectors.toList());
     }
 
-    public List<RoleResponseDTO> getAllRoles() {
-        return roleRepository.findAll().stream()
-                .map(this::mapToResponse)
-                .collect(Collectors.toList());
+    public Page<RoleResponseDTO> getAllRoles(Pageable pageable) {
+        return roleRepository.findAll(pageable).map(this::mapToResponse);
     }
 
     @Transactional
