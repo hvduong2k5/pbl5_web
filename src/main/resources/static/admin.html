@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Console - Tomato Detection System</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/components.css">
+</head>
+<body>
+    <div id="header-container"></div>
+    <main class="history-layout">
+
+        <!-- User Management -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <h2>User Management</h2>
+            <button id="btn-add-user" class="btn btn-primary" style="width: auto; margin: 0; padding: 8px 15px;">Add New User</button>
+        </div>
+        <div class="history-table-container" style="overflow-x: auto;">
+            <table class="table" id="users-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Username</th>
+                        <th>Enabled</th>
+                        <th>Roles</th>
+                        <th>Created At</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="user-body">
+                </tbody>
+            </table>
+        </div>
+
+        <hr style="margin: 30px 0; border: 0; border-top: 1px solid var(--border-color);">
+
+        <!-- Role Management -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <h2>Role Management</h2>
+            <button id="btn-add-role" class="btn btn-primary" style="width: auto; margin: 0; padding: 8px 15px;">Create New Role</button>
+        </div>
+
+        <p style="color: #666; font-size: 0.9em;">Click the button above to define new roles and assign permissions to them.</p>
+
+        <!-- Modals -->
+
+        <!-- Add/Edit User Modal -->
+        <div id="user-modal" class="modal-overlay hidden">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="user-modal-title">Create New User</h3>
+                    <button class="modal-close" onclick="closeModal('user-modal')">&times;</button>
+                </div>
+                <form id="user-form">
+                    <div class="modal-body">
+                        <div id="user-error" class="error-alert hidden"></div>
+                        <input type="hidden" id="userId" />
+                        <div class="form-group">
+                            <label for="username">Username (min 3 chars)</label>
+                            <input type="text" id="username" name="username" class="form-control" required />
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Password (min 6 chars, leave blank to keep unchanged)</label>
+                            <input type="password" id="password" name="password" class="form-control" />
+                        </div>
+                        <div class="form-group checkbox-item">
+                            <input type="checkbox" id="enabled" name="enabled" checked />
+                            <label for="enabled">Account Enabled</label>
+                        </div>
+                        <div class="form-group">
+                            <label>Assign Roles</label>
+                            <div class="checkbox-list" id="role-checkboxes">
+                                <!-- Roles will be populated here -->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" style="width: auto; margin:0;" onclick="closeModal('user-modal')">Cancel</button>
+                        <button type="submit" class="btn btn-primary" style="width: auto; margin:0;">Save User</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Add Role Modal -->
+        <div id="role-modal" class="modal-overlay hidden">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Create New Role</h3>
+                    <button class="modal-close" onclick="closeModal('role-modal')">&times;</button>
+                </div>
+                <form id="role-form">
+                    <div class="modal-body">
+                        <div id="role-error" class="error-alert hidden"></div>
+                        <div class="form-group">
+                            <label for="roleName">Role Name</label>
+                            <input type="text" id="roleName" name="roleName" class="form-control" placeholder="e.g. MANAGER" required />
+                        </div>
+                        <div class="form-group">
+                            <label>Assign Permissions</label>
+                            <div class="checkbox-list" id="permission-checkboxes">
+                                <!-- Permissions will be populated here -->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" style="width: auto; margin:0;" onclick="closeModal('role-modal')">Cancel</button>
+                        <button type="submit" class="btn btn-primary" style="width: auto; margin:0;">Create Role</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <script src="js/utils/constants.js"></script>
+    <script src="js/utils/helpers.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/components/header.js"></script>
+    <script src="js/pages/admin.js"></script>
+    <script>
+        function closeModal(id) {
+            document.getElementById(id).classList.add('hidden');
+        }
+    </script>
+</body>
+</html>
