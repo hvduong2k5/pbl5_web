@@ -6,6 +6,8 @@ import com.hvduong.detectiontomatoes.model.dto.RoleResponseDTO;
 import com.hvduong.detectiontomatoes.model.dto.RoleUpdateDTO;
 import com.hvduong.detectiontomatoes.service.RoleService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -30,8 +32,9 @@ public class RoleManagementController {
     }
 
     @GetMapping("/roles")
-    public ResponseEntity<List<RoleResponseDTO>> getAllRoles() {
-        return ResponseEntity.ok(roleService.getAllRoles());
+    public ResponseEntity<Page<RoleResponseDTO>> getAllRoles(@RequestParam(defaultValue = "0") int page,
+                                                             @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(roleService.getAllRoles(PageRequest.of(page, size)));
     }
 
     @PostMapping("/roles")
