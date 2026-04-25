@@ -25,12 +25,7 @@ async function initAdminPage() {
     let rolePage = 0;
     let roleTotalPages = 1;
 
-    // Load data
-    await loadPermissions();
-    await loadRoles();
-    await loadUsers();
-
-    // DOM Elements
+    // Khởi tạo DOM Elements trước khi gọi API
     const userModal = document.getElementById('user-modal');
     const roleModal = document.getElementById('role-modal');
     const userForm = document.getElementById('user-form');
@@ -41,6 +36,11 @@ async function initAdminPage() {
     const btnUserNext = document.getElementById('btn-user-next');
     const btnRolePrev = document.getElementById('btn-role-prev');
     const btnRoleNext = document.getElementById('btn-role-next');
+
+    // Load data
+    await loadPermissions();
+    await loadRoles();
+    await loadUsers();
 
     // --- Pagination Event Listeners ---
     if (btnUserPrev) {
