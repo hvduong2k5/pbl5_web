@@ -11,11 +11,15 @@ async function initAdminPage() {
     renderHeader(window.location.pathname, null);
     
     const userBody = document.getElementById('user-body');
+    const roleBody = document.getElementById('role-body');
+    
     let allUsers = [];
-    const allKnownRoles = new Set(['ADMIN', 'OPERATOR']);
+    let allRoles = [];
+    let allKnownRoles = new Set(); // Sẽ được cập nhật từ API roles
 
     // Load data
     await loadPermissions();
+    await loadRoles();
     await loadUsers();
 
     // DOM Elements
@@ -40,7 +44,11 @@ async function initAdminPage() {
 
     // Nút mở modal tạo role
     document.getElementById('btn-add-role').addEventListener('click', () => {
+        document.getElementById('role-modal-title').textContent = 'Create New Role';
+        document.getElementById('roleId').value = '';
         document.getElementById('roleName').value = '';
+        document.getElementById('roleName').disabled = false;
+        
         // Bỏ check tất cả permission
         document.querySelectorAll('input[name="permissions"]').forEach(cb => cb.checked = false);
         document.getElementById('role-error').classList.add('hidden');
@@ -78,7 +86,7 @@ async function initAdminPage() {
                 await API.createUser(payload);
             }
             userModal.classList.add('hidden');
-            loadUsers(); // reload bảng
+            await loadUsers(); // reload bảng
         } catch (err) {
             errorDiv.textContent = err.message;
             errorDiv.classList.remove('hidden');
@@ -91,6 +99,7 @@ async function initAdminPage() {
         const errorDiv = document.getElementById('role-error');
         errorDiv.classList.add('hidden');
 
+        const id = document.getElementById('roleId').value;
         const name = document.getElementById('roleName').value.trim();
         const permissionIds = Array.from(document.querySelectorAll('input[name="permissions"]:checked')).map(cb => parseInt(cb.value));
 
@@ -101,15 +110,58 @@ async function initAdminPage() {
         }
 
         try {
-            await API.createRole({ name, permissionIds });
-            allKnownRoles.add(name.toUpperCase());
+            if (id) {
+                // Update
+                await API.updateRole(id, { name, permissionIds });
+                alert(`Cập nhật Role ${name.toUpperCase()} thành công!`);
+            } else {
+                // Create
+                await API.createRole({ name, permissionIds });
+                alert(`Tạo Role ${name.toUpperCase()} thành công!`);
+            }
             roleModal.classList.add('hidden');
-            alert(`Tạo Role ${name.toUpperCase()} thành công!`);
+            await loadRoles(); // reload role table and role checkboxes
         } catch (err) {
             errorDiv.textContent = err.message;
             errorDiv.classList.remove('hidden');
         }
     });
+
+    async function loadRoles() {
+        try {
+            allRoles = await API.getAllRoles();
+            allKnownRoles.clear();
+            roleBody.innerHTML = '';
+            
+            allRoles.forEach(r => {
+                allKnownRoles.add(r.name);
+                
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${r.id}</td>
+                    <td><strong>${r.name}</strong></td>
+                    <td>${r.permissions ? r.permissions.map(p => `<span class="badge detected">${p.name}</span>`).join(' ') : 'Không có'}</td>
+                    <td>
+                        <button class="btn btn-secondary btn-edit-role" data-id="${r.id}" style="padding: 4px 8px; margin: 0 5px 0 0; display: inline-block; width: auto; font-size: 0.8em;">Edit</button>
+                        <button class="btn btn-danger btn-delete-role" data-id="${r.id}" style="padding: 4px 8px; margin: 0; display: inline-block; width: auto; font-size: 0.8em;">Delete</button>
+                    </td>
+                `;
+                roleBody.appendChild(tr);
+            });
+            
+            // Gắn sự kiện edit/delete
+            document.querySelectorAll('.btn-edit-role').forEach(btn => {
+                btn.addEventListener('click', (e) => editRole(e.target.getAttribute('data-id')));
+            });
+            document.querySelectorAll('.btn-delete-role').forEach(btn => {
+                btn.addEventListener('click', (e) => deleteRole(e.target.getAttribute('data-id')));
+            });
+            
+        } catch (e) {
+            console.error('[ERROR Admin] Lỗi khi lấy danh sách role:', e);
+            roleBody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: red;">Lỗi tải dữ liệu. Vui lòng kiểm tra Console.</td></tr>`;
+        }
+    }
 
     async function loadUsers() {
         try {
@@ -117,8 +169,6 @@ async function initAdminPage() {
             userBody.innerHTML = '';
             
             allUsers.forEach(u => {
-                u.roles.forEach(r => allKnownRoles.add(r)); // Thu thập các role động
-
                 const tr = document.createElement('tr');
                 const badgeClass = u.enabled ? 'badge sorted' : 'badge rotten';
                 const statusText = u.enabled ? 'Active' : 'Disabled';
@@ -130,19 +180,19 @@ async function initAdminPage() {
                     <td>${u.roles.map(r => `<span class="badge classified">${r}</span>`).join(' ')}</td>
                     <td>${formatDate(u.createdAt)}</td>
                     <td>
-                        <button class="btn btn-secondary btn-edit" data-id="${u.id}" style="padding: 4px 8px; margin: 0 5px 0 0; display: inline-block; width: auto; font-size: 0.8em;">Edit</button>
-                        <button class="btn btn-danger btn-delete" data-id="${u.id}" style="padding: 4px 8px; margin: 0; display: inline-block; width: auto; font-size: 0.8em;">Delete</button>
+                        <button class="btn btn-secondary btn-edit-user" data-id="${u.id}" style="padding: 4px 8px; margin: 0 5px 0 0; display: inline-block; width: auto; font-size: 0.8em;">Edit</button>
+                        <button class="btn btn-danger btn-delete-user" data-id="${u.id}" style="padding: 4px 8px; margin: 0; display: inline-block; width: auto; font-size: 0.8em;">Delete</button>
                     </td>
                 `;
                 userBody.appendChild(tr);
             });
 
             // Gắn sự kiện cho các nút Edit và Delete
-            document.querySelectorAll('.btn-edit').forEach(btn => {
+            document.querySelectorAll('.btn-edit-user').forEach(btn => {
                 btn.addEventListener('click', (e) => editUser(e.target.getAttribute('data-id')));
             });
 
-            document.querySelectorAll('.btn-delete').forEach(btn => {
+            document.querySelectorAll('.btn-delete-user').forEach(btn => {
                 btn.addEventListener('click', (e) => deleteUser(e.target.getAttribute('data-id')));
             });
 
@@ -206,7 +256,45 @@ async function initAdminPage() {
         if (!confirm('Bạn có chắc chắn muốn xóa user ID = ' + id + ' không?')) return;
         try {
             await API.deleteUser(id);
-            loadUsers();
+            await loadUsers();
+        } catch (e) {
+            alert('Lỗi: ' + e.message);
+        }
+    }
+
+    function editRole(id) {
+        const r = allRoles.find(role => role.id == id);
+        if (!r) return;
+
+        document.getElementById('role-modal-title').textContent = 'Edit Role: ' + r.name;
+        document.getElementById('roleId').value = r.id;
+        document.getElementById('roleName').value = r.name;
+        
+        if (r.name === 'ADMIN' || r.name === 'OPERATOR') {
+            document.getElementById('roleName').disabled = true;
+        } else {
+            document.getElementById('roleName').disabled = false;
+        }
+        
+        // Reset permissions
+        document.querySelectorAll('input[name="permissions"]').forEach(cb => cb.checked = false);
+        // Check assigned permissions
+        if (r.permissions) {
+            r.permissions.forEach(p => {
+                const cb = document.getElementById(`perm-${p.id}`);
+                if (cb) cb.checked = true;
+            });
+        }
+        
+        document.getElementById('role-error').classList.add('hidden');
+        roleModal.classList.remove('hidden');
+    }
+
+    async function deleteRole(id) {
+        if (!confirm('Bạn có chắc chắn muốn xóa role ID = ' + id + ' không? Lưu ý: Xóa role sẽ ảnh hưởng tới các user đang mang role này.')) return;
+        try {
+            await API.deleteRole(id);
+            await loadRoles();
         } catch (e) {
             alert('Lỗi: ' + e.message);
         }
