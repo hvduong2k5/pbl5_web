@@ -51,20 +51,46 @@
 }
 
 .user-btn:hover {
-    background-color: #eee;
+    background-color: #f1f1f1;
 }
 
 .dropdown-content {
     display: none;
     position: absolute;
     right: 0;
+    top: calc(100% + 8px);
     background-color: var(--card-bg);
-    min-width: 160px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.1);
+    min-width: 200px;
+    box-shadow: 0px 4px 12px rgba(0,0,0,0.15);
     z-index: 100;
     border: 1px solid var(--border-color);
-    border-radius: 4px;
-    margin-top: 5px;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.dropdown-header {
+    padding: 15px 16px;
+    background-color: #f8f9fa;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.dropdown-header .username {
+    display: block;
+    font-weight: bold;
+    font-size: 1.05em;
+    color: var(--text-color);
+    margin-bottom: 3px;
+}
+
+.dropdown-header .role-badge {
+    display: inline-block;
+    font-size: 0.75em;
+    background-color: var(--primary-color);
+    color: white;
+    padding: 2px 6px;
+    border-radius: 10px;
+    font-weight: bold;
+    letter-spacing: 0.5px;
 }
 
 .dropdown-content a {
@@ -74,10 +100,20 @@
     display: block;
     font-size: 0.9em;
     cursor: pointer;
+    transition: background-color 0.2s;
 }
 
 .dropdown-content a:hover {
     background-color: #f1f1f1;
+}
+
+.dropdown-content a.logout-btn {
+    color: var(--danger-color);
+    border-top: 1px solid var(--border-color);
+}
+
+.dropdown-content a.logout-btn:hover {
+    background-color: #ffebee;
 }
 
 .show {
