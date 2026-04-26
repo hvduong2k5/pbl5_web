@@ -41,6 +41,10 @@ public class SecurityConfig {
                         .requestMatchers("/", "/index.html", "/history.html", "/login.html", "/admin.html", "/css/**", "/js/**", "/images/**", "/favicon.ico", "/error").permitAll()
                         // Cho phép AI Server (chưa có chức năng gắn token) gửi dữ liệu POST:
                         .requestMatchers("/api/fruit").permitAll()
+                        
+                        // Bảo mật cấp độ URL: Chặn tất cả các luồng truy cập /api/admin/** nếu không có quyền ADMIN
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+
                         .anyRequest().authenticated()
                 )
                 .authenticationProvider(authenticationProvider())
