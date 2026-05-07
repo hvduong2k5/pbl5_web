@@ -38,9 +38,13 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/ws/**").permitAll()
-                        .requestMatchers("/", "/index.html", "/history.html", "/css/**", "/js/**", "/images/**", "/favicon.ico").permitAll()
+                        .requestMatchers("/", "/index.html", "/history.html", "/login.html", "/admin.html", "/css/**", "/js/**", "/images/**", "/favicon.ico", "/error").permitAll()
                         // Cho phép AI Server (chưa có chức năng gắn token) gửi dữ liệu POST:
                         .requestMatchers("/api/fruit").permitAll()
+                        
+                        // Bảo mật cấp độ URL: Chặn tất cả các luồng truy cập /api/admin/** nếu không có quyền ADMIN
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+
                         .anyRequest().authenticated()
                 )
                 .authenticationProvider(authenticationProvider())
@@ -51,7 +55,8 @@ public class SecurityConfig {
 
     @Bean
     public AuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider(customUserDetailsService);
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(customUserDetailsService);
         authProvider.setPasswordEncoder(passwordEncoder());
         return authProvider;
     }

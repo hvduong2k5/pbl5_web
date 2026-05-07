@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Tomato Detection System</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/components.css">
+</head>
+<body>
+    <header class="app-header">
+        <div class="nav-links">
+            <span style="font-weight: bold; color: var(--primary-color); font-size: 1.2em;">Tomato Detection System</span>
+        </div>
+    </header>
+
+    <main class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <h2>Welcome Back</h2>
+                <p>Industrial Quality Assurance Portal</p>
+            </div>
+
+            <form id="login-form">
+                <div id="error-message" class="error-alert hidden">
+                    Tên đăng nhập hoặc mật khẩu không chính xác.
+                </div>
+
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" class="form-control" placeholder="Nhập tên đăng nhập" required autocomplete="username" />
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" class="form-control" placeholder="••••••••" required autocomplete="current-password" />
+                </div>
+
+                <button id="btn-submit" type="submit" class="btn btn-primary" style="margin-top: 15px;">
+                    <span id="btn-text">Sign In</span>
+                </button>
+            </form>
+        </div>
+    </main>
+
+    <script src="js/utils/constants.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/pages/login.js"></script>
+</body>
+</html>

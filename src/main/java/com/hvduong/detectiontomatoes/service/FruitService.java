@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Arrays;
+import java.util.stream.Collectors;
 
 @Service
 public class FruitService {
@@ -61,20 +62,38 @@ public class FruitService {
         stats.put("total", (int) fruitRepository.countByBatch_Id(batchId));
         stats.put("wait", (int) fruitRepository.countByBatch_IdAndStatus(batchId, "DETECTED")); // Wait applies only when detected but not yet classified
         
+        // Count specific labels
         List<Object[]> labelCounts = fruitRepository.countLabelsByBatchId(batchId);
         stats.put("ripe", 0);
         stats.put("unripe", 0);
-        stats.put("rotten", 0);
+        stats.put("rotten", 0); // Defaults
 
         for (Object[] row : labelCounts) {
             String label = (String) row[0];
             Long count = (Long) row[1];
             if (label != null) {
+                // Map green to unripe if needed, or directly use unripe
                 if (label.equals("green")) label = "unripe";
                 stats.put(label, count.intValue());
             }
         }
         return stats;
+    }
+
+    public Map<String, Integer> getCurrentStats() {
+        Batch currentBatch = getCurrentBatch();
+        if (currentBatch != null) {
+            return getStatsByBatch(currentBatch.getId());
+        }
+
+        // Return default empty stats if no batch is active
+        Map<String, Integer> emptyStats = new HashMap<>();
+        emptyStats.put("total", 0);
+        emptyStats.put("wait", 0);
+        emptyStats.put("ripe", 0);
+        emptyStats.put("unripe", 0);
+        emptyStats.put("rotten", 0);
+        return emptyStats;
     }
 
     private void broadcastStatsForBatch(Batch batch) {
@@ -178,5 +197,29 @@ public class FruitService {
         
         webSocketHandler.broadcastEvent(fruitMapper.toEventDTO(fruit, "transfer"));
         broadcastStatsForBatch(fruit.getBatch());
+    }
+
+    private Map<String, Object> toFruitMap(Fruit f) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("id", f.getId());
+        map.put("status", f.getStatus());
+        map.put("label", f.getLabel());
+        map.put("sortedType", f.getSortedType());
+        map.put("createdAt", f.getCreatedAt() != null ? f.getCreatedAt().toString() : null);
+        map.put("classifiedAt", f.getClassifiedAt() != null ? f.getClassifiedAt().toString() : null);
+        map.put("sortedAt", f.getSortedAt() != null ? f.getSortedAt().toString() : null);
+        map.put("imageUrl", f.getImageUrl());
+        map.put("confidence", f.getConfidence());
+        return map;
+    }
+
+    public List<Map<String, Object>> getFruitsByBatch(Integer batchId) {
+        List<Fruit> fruits = fruitRepository.findAllByBatch_Id(batchId);
+        return fruits.stream().map(this::toFruitMap).collect(Collectors.toList());
+    }
+
+    public List<Map<String, Object>> getAllFruits() {
+        List<Fruit> fruits = fruitRepository.findAll();
+        return fruits.stream().map(this::toFruitMap).collect(Collectors.toList());
     }
 }
