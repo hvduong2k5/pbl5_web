@@ -103,6 +103,13 @@ public class FruitService {
         }
     }
 
+    public void handleSystemStatus(FruitEventDTO dto) {
+        // Assuming label field contains the system status string (e.g. "Running", "Stopped")
+        if (dto.getLabel() != null) {
+            webSocketHandler.broadcastSystemStatus(dto.getLabel());
+        }
+    }
+
     @Transactional
     public void handleDetected(FruitEventDTO dto) {
         Fruit fruit = fruitRepository.findById(dto.getId()).orElse(null);
