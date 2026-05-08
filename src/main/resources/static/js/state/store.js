@@ -4,7 +4,8 @@ const Store = {
         fruits: {}, // id -> fruit data
         stats: {
             ripe: 0, unripe: 0, rotten: 0, total: 0, wait: 0
-        }
+        },
+        systemStatus: null
     },
     listeners: [],
     subscribe(listener) {
@@ -22,6 +23,10 @@ const Store = {
         fruitsList.forEach(f => {
             this.state.fruits[f.id] = f;
         });
+        this.notify();
+    },
+    updateSystemStatus(status) {
+        this.state.systemStatus = status;
         this.notify();
     },
     updateFruit(fruitEvent) {
@@ -43,6 +48,7 @@ const Store = {
             if (fruitEvent.image_url) this.state.fruits[id].imageUrl = fruitEvent.image_url;
             if (fruitEvent.confidence !== undefined) this.state.fruits[id].confidence = fruitEvent.confidence;
             
+            // Map event to status to maintain consistency
             if (fruitEvent.event === 'detected') this.state.fruits[id].status = 'DETECTED';
             if (fruitEvent.event === 'classified') this.state.fruits[id].status = 'CLASSIFIED';
             if (fruitEvent.event === 'transfer') this.state.fruits[id].status = 'TRANSFERRED';
