@@ -33,6 +33,10 @@ public class WebSocketHandler extends TextWebSocketHandler {
         broadcast(Collections.singletonMap("stats", stats));
     }
 
+    public void broadcastSystemStatus(String status) {
+        broadcast(Collections.singletonMap("systemStatus", status));
+    }
+
     private void broadcast(Object obj) {
         try {
             String msg = objectMapper.writeValueAsString(obj);
