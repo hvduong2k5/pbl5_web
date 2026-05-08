@@ -1,5 +1,4 @@
 -- Chèn dữ liệu mẫu cho bảng Permissions
-INSERT INTO permissions (name) VALUES ('CONTROL_SYSTEM') ON CONFLICT (name) DO NOTHING;
 INSERT INTO permissions (name) VALUES ('EXPORT_DATA') ON CONFLICT (name) DO NOTHING;
 INSERT INTO permissions (name) VALUES ('VIEW_HISTORY') ON CONFLICT (name) DO NOTHING;
 INSERT INTO permissions (name) VALUES ('MANAGE_BATCH') ON CONFLICT (name) DO NOTHING;
@@ -13,14 +12,14 @@ INSERT INTO roles (name) VALUES ('OPERATOR') ON CONFLICT (name) DO NOTHING;
 INSERT INTO role_permissions (role_id, permission_id)
 SELECT r.id, p.id
 FROM roles r, permissions p
-WHERE r.name = 'ADMIN' AND p.name IN ('CONTROL_SYSTEM', 'EXPORT_DATA', 'VIEW_HISTORY', 'MANAGE_BATCH')
+WHERE r.name = 'ADMIN' AND p.name IN ('EXPORT_DATA', 'VIEW_HISTORY', 'MANAGE_BATCH')
 ON CONFLICT DO NOTHING;
 
--- Giả định Role OPERATOR có quyền CONTROL_SYSTEM và VIEW_HISTORY
+-- Giả định Role OPERATOR có quyền VIEW_HISTORY
 INSERT INTO role_permissions (role_id, permission_id)
 SELECT r.id, p.id
 FROM roles r, permissions p
-WHERE r.name = 'OPERATOR' AND p.name IN ('CONTROL_SYSTEM', 'VIEW_HISTORY')
+WHERE r.name = 'OPERATOR' AND p.name IN ('VIEW_HISTORY')
 ON CONFLICT DO NOTHING;
 
 -- Tùy chọn: Chèn 1 tài khoản Admin mặc định (Password là chuỗi đã mã hóa hoặc plaintext tùy cấu hình hệ thống, ở đây là '123456' để minh họa)
