@@ -17,6 +17,9 @@ function initWebSocket(store) {
         if (data.stats) {
             console.log('[DEBUG WebSocket] Nhận cập nhật Stats từ Server:', data.stats);
             store.updateStats(data.stats);
+        } else if (data.systemStatus) {
+            console.log('[DEBUG WebSocket] Nhận cập nhật System Status từ Server:', data.systemStatus);
+            store.updateSystemStatus(data.systemStatus);
         } else {
             console.log('[DEBUG WebSocket] Nhận Fruit Event từ Server:', data);
             // It's a fruit event
