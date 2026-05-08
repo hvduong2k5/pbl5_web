@@ -55,6 +55,7 @@ public class MqttSubscriber implements MqttCallback {
                 case "classified" -> fruitService.handleClassified(event);
                 case "sorted" -> fruitService.handleSorted(event);
                 case "transfer" -> fruitService.handleTransfer(event);
+                case "status" -> fruitService.handleSystemStatus(event);
             }
         } catch (Exception e) {
             // Log error
