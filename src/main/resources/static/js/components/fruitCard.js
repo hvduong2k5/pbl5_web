@@ -1,6 +1,6 @@
 function createFruitCard(fruit, queueType) {
     const el = document.createElement('div');
-    
+
     // All queues use card style now
     el.className = 'fruit-card';
     el.id = `fruit-${fruit.id}`;
@@ -21,22 +21,28 @@ function createFruitCard(fruit, queueType) {
     }
 
     let bodyHtml = '';
-    
+
     if (queueType === 'detected') {
         // Queue 1 - Detected/Classified
         const labelVi = getLabelVietnamese(fruit.label);
         const badgeClass = getBadgeClass(fruit.label);
+
+        const time = formatTime(fruit.createdAt);
         
         bodyHtml = `
             <div class="fruit-card-row">
                 <b>Trạng thái</b>
                 <span class="dot"></span>
-                ${fruit.label 
-                    ? `<span class="badge ${badgeClass}">${labelVi}</span>` 
-                    : '<span style="color:var(--text-muted)">Đang phân tích</span>'}
+                ${fruit.label
+                ? `<span class="badge ${badgeClass}">${labelVi}</span>`
+                : '<span style="color:var(--text-muted)">Đang phân tích</span>'}
             </div>
             <div class="fruit-card-row">
-                <b>Độ chín</b>
+                <b>Thời gian</b>
+                <span>${time}</span>
+            </div>
+            <div class="fruit-card-row">
+                <b>Độ chính xác</b>
                 <span>${fruit.confidence !== undefined && fruit.confidence !== null ? (fruit.confidence * 100).toFixed(1) + '%' : '---'}</span>
             </div>
         `;
@@ -44,17 +50,23 @@ function createFruitCard(fruit, queueType) {
         // Queue 2 - Transfer
         const labelVi = getLabelVietnamese(fruit.label);
         const badgeClass = getBadgeClass(fruit.label);
+
+        const time = formatTime(fruit.classifiedAt || fruit.createdAt);
         
         bodyHtml = `
             <div class="fruit-card-row">
                 <b>Phân loại</b>
                 <span class="dot"></span>
-                ${fruit.label 
-                    ? `<span class="badge ${badgeClass}">${labelVi}</span>` 
-                    : '<span style="color:var(--text-muted)">---</span>'}
+                ${fruit.label
+                ? `<span class="badge ${badgeClass}">${labelVi}</span>`
+                : '<span style="color:var(--text-muted)">---</span>'}
             </div>
             <div class="fruit-card-row">
-                <b>Độ chín</b>
+                <b>Thời gian</b>
+                <span>${time}</span>
+            </div>
+            <div class="fruit-card-row">
+                <b>Độ chính xác</b>
                 <span>${fruit.confidence !== undefined && fruit.confidence !== null ? (fruit.confidence * 100).toFixed(0) + '%' : '---'}</span>
             </div>
         `;
@@ -63,21 +75,21 @@ function createFruitCard(fruit, queueType) {
         const labelVi = getLabelVietnamese(fruit.label);
         const badgeClass = getBadgeClass(fruit.label);
         const time = formatTime(fruit.sortedAt || fruit.classifiedAt || fruit.createdAt);
-        
+
         bodyHtml = `
             <div class="fruit-card-row">
                 <b>Phân loại</b>
                 <span class="dot"></span>
-                ${fruit.label 
-                    ? `<span class="badge ${badgeClass}">${labelVi}</span>` 
-                    : '<span style="color:var(--text-muted)">---</span>'}
+                ${fruit.label
+                ? `<span class="badge ${badgeClass}">${labelVi}</span>`
+                : '<span style="color:var(--text-muted)">---</span>'}
             </div>
             <div class="fruit-card-row">
                 <b>Thời gian</b>
                 <span>${time}</span>
             </div>
             <div class="fruit-card-row">
-                <b>Độ chín</b>
+                <b>Độ chính xác</b>
                 <span>${fruit.confidence !== undefined && fruit.confidence !== null ? (fruit.confidence * 100).toFixed(0) + '%' : '---'}</span>
             </div>
         `;

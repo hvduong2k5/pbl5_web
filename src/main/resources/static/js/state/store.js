@@ -5,7 +5,7 @@ const Store = {
         stats: {
             ripe: 0, unripe: 0, reject: 0, total: 0, wait: 0
         },
-        systemStatus: null
+        systemStatus: localStorage.getItem('systemStatus') || null
     },
     listeners: [],
     subscribe(listener) {
@@ -27,6 +27,11 @@ const Store = {
     },
     updateSystemStatus(status) {
         this.state.systemStatus = status;
+        if (status) {
+            localStorage.setItem('systemStatus', status);
+        } else {
+            localStorage.removeItem('systemStatus');
+        }
         this.notify();
     },
     updateFruit(fruitEvent) {
