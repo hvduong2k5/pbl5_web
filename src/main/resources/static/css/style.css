@@ -91,6 +91,10 @@
     --scrollbar-thumb: #475569;
 }
 
+[data-theme="dark"] .role-name-cell {
+    color: #ffffff;
+}
+
 /* ========== BASE RESET ========== */
 * {
     box-sizing: border-box;
@@ -137,4 +141,9 @@ img {
 .queue, .table, .modal-content, .login-card, .form-control,
 .btn, input, select {
     transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.role-name-cell {
+    font-weight: 600;
+    color: var(--primary-color);
 }

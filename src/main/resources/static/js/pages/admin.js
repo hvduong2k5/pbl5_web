@@ -154,7 +154,7 @@ async function loadRoles() {
             
             tr.innerHTML = `
                 <td style="font-weight:600;">#${role.id}</td>
-                <td style="font-weight:600; color:var(--primary-color);">${role.name}</td>
+                <td class="role-name-cell">${role.name}</td>
                 <td style="max-width: 300px; display:flex; flex-wrap:wrap; gap:4px;">${permsHtml}</td>
                 <td>
                     <div class="action-btns">
