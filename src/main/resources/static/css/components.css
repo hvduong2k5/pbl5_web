@@ -868,6 +868,13 @@
         box-shadow: none;
         background: transparent;
         padding: 0;
+    }
+    
+    .list-cards-container {
+        grid-template-columns: 1fr !important;
+    }
+    
+    .queue.mobile-full {
         min-width: unset;
     }
     .queue.mobile-full .queue-header {

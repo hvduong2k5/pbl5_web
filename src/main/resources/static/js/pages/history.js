@@ -82,7 +82,6 @@ async function initHistoryPage() {
                                 </div>
                                 <div class="card-details-row">
                                     <span class="badge ${badgeClass}">${labelVi}</span>
-                                    ${statusHtml}
                                     <span style="margin-left:auto; font-weight:600;">${confidenceHtml}</span>
                                 </div>
                             </div>
