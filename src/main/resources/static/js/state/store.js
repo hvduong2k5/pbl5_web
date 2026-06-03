@@ -36,13 +36,22 @@ const Store = {
     },
     updateFruit(fruitEvent) {
         const id = fruitEvent.id;
+        if (!id) return; // Prevent creating undefined fruit
+
+        // Ensure we always have a timestamp
+        if (!fruitEvent.timestamp) {
+            fruitEvent.timestamp = new Date().toISOString();
+        }
+
         if (!this.state.fruits[id]) {
             this.state.fruits[id] = { 
                 id: id, 
                 status: fruitEvent.event === 'detected' ? 'DETECTED' : (fruitEvent.event === 'classified' ? 'CLASSIFIED' : (fruitEvent.event === 'transfer' ? 'TRANSFERRED' : 'SORTED')), 
                 label: fruitEvent.label, 
                 sortedType: fruitEvent.type, 
-                createdAt: fruitEvent.timestamp,
+                createdAt: fruitEvent.event === 'detected' ? fruitEvent.timestamp : new Date().toISOString(),
+                classifiedAt: fruitEvent.event === 'classified' ? fruitEvent.timestamp : null,
+                sortedAt: fruitEvent.event === 'sorted' ? fruitEvent.timestamp : null,
                 imageUrl: fruitEvent.image_url,
                 confidence: fruitEvent.confidence
             };
@@ -56,17 +65,18 @@ const Store = {
             // Map event to status to maintain consistency
             if (fruitEvent.event === 'detected') {
                 this.state.fruits[id].status = 'DETECTED';
+                if (!this.state.fruits[id].createdAt) this.state.fruits[id].createdAt = fruitEvent.timestamp;
             }
             if (fruitEvent.event === 'classified') {
                 this.state.fruits[id].status = 'CLASSIFIED';
-                if (fruitEvent.timestamp) this.state.fruits[id].classifiedAt = fruitEvent.timestamp;
+                this.state.fruits[id].classifiedAt = fruitEvent.timestamp;
             }
             if (fruitEvent.event === 'transfer') {
                 this.state.fruits[id].status = 'TRANSFERRED';
             }
             if (fruitEvent.event === 'sorted') {
                 this.state.fruits[id].status = 'SORTED';
-                if (fruitEvent.timestamp) this.state.fruits[id].sortedAt = fruitEvent.timestamp;
+                this.state.fruits[id].sortedAt = fruitEvent.timestamp;
             }
         }
         if (fruitEvent.event) {

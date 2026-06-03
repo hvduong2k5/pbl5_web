@@ -137,3 +137,4 @@ async function initHistoryPage() {
 }
 
 document.addEventListener('DOMContentLoaded', initHistoryPage);
+
