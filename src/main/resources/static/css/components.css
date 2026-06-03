@@ -1056,3 +1056,9 @@
     font-size: 0.85em;
     color: var(--text-secondary);
 }
+
+@media (min-width: 769px) {
+    .mobile-only {
+        display: none !important;
+    }
+}
