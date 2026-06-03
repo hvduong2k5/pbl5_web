@@ -349,7 +349,7 @@ function populatePermissionCheckboxes(checkedPermNames) {
         div.className = 'checkbox-item';
         const isChecked = checkedPermNames.includes(perm.name) ? 'checked' : '';
         div.innerHTML = `
-            <input type="checkbox" id="perm_${perm.id}" name="permissions" value="${perm.name}" ${isChecked} />
+            <input type="checkbox" id="perm_${perm.id}" name="permissions" value="${perm.id}" ${isChecked} />
             <label for="perm_${perm.id}">${perm.name}</label>
         `;
         container.appendChild(div);
@@ -365,7 +365,7 @@ async function handleRoleSubmit(e) {
     const name = document.getElementById('roleName').value.trim().toUpperCase();
     
     const permCheckboxes = document.querySelectorAll('input[name="permissions"]:checked');
-    const permissions = Array.from(permCheckboxes).map(cb => cb.value);
+    const permissionIds = Array.from(permCheckboxes).map(cb => parseInt(cb.value, 10));
     
     if (!name) {
         errorEl.textContent = 'Tên vai trò không được để trống.';
@@ -373,7 +373,7 @@ async function handleRoleSubmit(e) {
         return;
     }
     
-    const dto = { name, permissions };
+    const dto = { name, permissionIds };
     
     try {
         if (id) {
