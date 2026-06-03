@@ -95,6 +95,12 @@
     color: #ffffff;
 }
 
+[data-theme="dark"] .badge.perm-badge {
+    background-color: rgba(99, 102, 241, 0.15);
+    color: #818cf8;
+    border-color: rgba(99, 102, 241, 0.3);
+}
+
 /* ========== BASE RESET ========== */
 * {
     box-sizing: border-box;
