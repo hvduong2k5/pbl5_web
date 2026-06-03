@@ -133,7 +133,7 @@ async function loadUsers() {
 
             if (mobileContainer) {
                 const cardHtml = `
-                    <div class="mobile-list-card">
+                    <div class="list-card">
                         <div class="card-title-row" style="margin-bottom: 12px; display:flex; gap:12px; align-items:center;">
                             <div class="user-avatar-circle" style="width: 50px; height: 50px; font-size: 1.2em; flex-shrink: 0;">${user.username.substring(0, 2).toUpperCase()}</div>
                             <div style="flex:1;">

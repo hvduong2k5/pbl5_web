@@ -946,7 +946,7 @@
 
 /* ========== LIST CARDS ========== */
 .list-cards-container {
-    display: grid;
+    display: grid !important;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 16px;
     margin-top: 16px;

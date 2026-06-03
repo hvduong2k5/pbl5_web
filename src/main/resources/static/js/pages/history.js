@@ -71,18 +71,19 @@ async function initHistoryPage() {
 
                 if (mobileContainer) {
                     const cardHtml = `
-                        <div class="mobile-list-card">
+                        <div class="list-card">
                             <div class="card-img-col">
                                 ${f.imageUrl ? `<img src="${f.imageUrl}" alt="${f.id}">` : 'N/A'}
                             </div>
                             <div class="card-content-col">
                                 <div class="card-title-row">
-                                    <span class="card-id">ID: ${f.id}</span>
-                                    <span class="card-time">${f.createdAt ? formatDate(f.createdAt) : ''}</span>
+                                    <span class="card-id">#${f.id}</span>
+                                    <span class="card-time">${f.createdAt ? new Date(f.createdAt).toLocaleTimeString() : '---'}</span>
                                 </div>
                                 <div class="card-details-row">
-                                    ${f.label ? `<span class="badge ${badgeClass}">${labelVi}</span>` : ''}
-                                    <span class="card-detail-text">Độ tin cậy: ${confidenceHtml}</span>
+                                    <span class="badge ${badgeClass}">${labelVi}</span>
+                                    ${statusHtml}
+                                    <span style="margin-left:auto; font-weight:600;">${confidenceHtml}</span>
                                 </div>
                             </div>
                         </div>
