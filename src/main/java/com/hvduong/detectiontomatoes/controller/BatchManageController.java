@@ -39,6 +39,7 @@ public class BatchManageController {
     }
 
     @GetMapping("/current/export")
+    @PreAuthorize("hasAuthority('EXPORT_DATA')")
     public void exportCurrentBatchToExcel(HttpServletResponse response) throws IOException {
         Integer currentBatchId = batchService.getCurrentBatchId();
         if (currentBatchId != null) {
@@ -49,6 +50,7 @@ public class BatchManageController {
     }
 
     @GetMapping("/all")
+    @PreAuthorize("hasAuthority('VIEW_HISTORY')")
     public ResponseEntity<List<Map<String, Object>>> getAllBatches() {
         return ResponseEntity.ok(batchService.getAllBatches());
     }

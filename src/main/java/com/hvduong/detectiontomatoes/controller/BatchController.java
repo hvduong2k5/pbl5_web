@@ -29,6 +29,7 @@ public class BatchController {
     }
 
     @GetMapping("/{batchId}/export")
+    @org.springframework.security.access.prepost.PreAuthorize("hasAuthority('EXPORT_DATA')")
     public void exportToExcel(@PathVariable Integer batchId, HttpServletResponse response) throws IOException {
         fruitExportService.exportFruitsByBatch(batchId, response);
     }

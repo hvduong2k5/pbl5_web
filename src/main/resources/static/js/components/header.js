@@ -24,6 +24,14 @@ function initSidebar() {
                 const adminItem = document.getElementById('nav-admin-item');
                 if (adminItem) adminItem.classList.remove('hidden');
             }
+
+            // Hide history nav if doesn't have VIEW_HISTORY (unless admin)
+            if (!hasAuthority('VIEW_HISTORY') && !hasAuthority('ROLE_ADMIN')) {
+                const historyNav = document.getElementById('nav-history');
+                if (historyNav && historyNav.parentElement) {
+                    historyNav.parentElement.style.display = 'none';
+                }
+            }
         }
     } catch (e) {
         console.error('Không thể giải mã token', e);
