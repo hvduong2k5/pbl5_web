@@ -54,10 +54,20 @@ const Store = {
             if (fruitEvent.confidence !== undefined) this.state.fruits[id].confidence = fruitEvent.confidence;
             
             // Map event to status to maintain consistency
-            if (fruitEvent.event === 'detected') this.state.fruits[id].status = 'DETECTED';
-            if (fruitEvent.event === 'classified') this.state.fruits[id].status = 'CLASSIFIED';
-            if (fruitEvent.event === 'transfer') this.state.fruits[id].status = 'TRANSFERRED';
-            if (fruitEvent.event === 'sorted') this.state.fruits[id].status = 'SORTED';
+            if (fruitEvent.event === 'detected') {
+                this.state.fruits[id].status = 'DETECTED';
+            }
+            if (fruitEvent.event === 'classified') {
+                this.state.fruits[id].status = 'CLASSIFIED';
+                if (fruitEvent.timestamp) this.state.fruits[id].classifiedAt = fruitEvent.timestamp;
+            }
+            if (fruitEvent.event === 'transfer') {
+                this.state.fruits[id].status = 'TRANSFERRED';
+            }
+            if (fruitEvent.event === 'sorted') {
+                this.state.fruits[id].status = 'SORTED';
+                if (fruitEvent.timestamp) this.state.fruits[id].sortedAt = fruitEvent.timestamp;
+            }
         }
         if (fruitEvent.event) {
             this.state.fruits[id].lastEvent = fruitEvent.event;
