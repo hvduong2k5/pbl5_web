@@ -25,6 +25,9 @@ async function initHistoryPage() {
             const val = batchSelect.value;
             const fruits = await API.getFruitsByBatch(val);
             historyBody.innerHTML = '';
+            
+            const mobileContainer = document.getElementById('mobile-history-cards');
+            if (mobileContainer) mobileContainer.innerHTML = '';
 
             if (fruits.length === 0) {
                 historyBody.innerHTML = `
@@ -33,6 +36,7 @@ async function initHistoryPage() {
                             Không có dữ liệu
                         </td>
                     </tr>`;
+                if (mobileContainer) mobileContainer.innerHTML = `<div style="text-align:center; padding: 40px; color: var(--text-muted);">Không có dữ liệu</div>`;
                 return;
             }
 

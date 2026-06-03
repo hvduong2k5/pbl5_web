@@ -133,23 +133,23 @@ async function loadUsers() {
 
             if (mobileContainer) {
                 const cardHtml = `
-                    <div class="mobile-list-card col-layout">
-                        <div class="card-title-row" style="margin-bottom: 12px;">
-                            <div class="user-cell">
-                                <div class="user-avatar-circle">${user.username.substring(0, 2).toUpperCase()}</div>
+                    <div class="mobile-list-card" style="align-items: center;">
+                        <div class="user-avatar-circle" style="width: 50px; height: 50px; font-size: 1.2em; flex-shrink: 0;">${user.username.substring(0, 2).toUpperCase()}</div>
+                        <div class="card-content-col" style="justify-content: center;">
+                            <div class="card-title-row">
                                 <div>
                                     <div class="user-name-text">${user.username}</div>
                                     <div style="font-size:0.85em; color:var(--text-muted);">${user.email || 'No email'}</div>
                                 </div>
+                                <div class="action-btns">
+                                    <button class="btn btn-outline btn-icon" onclick='openEditUserModal(${JSON.stringify(user).replace(/'/g, "&apos;")})'>✏️</button>
+                                    <button class="btn btn-danger btn-icon" onclick="deleteUser(${user.id})">🗑️</button>
+                                </div>
                             </div>
-                            <div class="action-btns">
-                                <button class="btn btn-outline btn-icon" onclick='openEditUserModal(${JSON.stringify(user).replace(/'/g, "&apos;")})'>✏️</button>
-                                <button class="btn btn-danger btn-icon" onclick="deleteUser(${user.id})">🗑️</button>
+                            <div class="card-details-row" style="margin-top: 4px; justify-content: space-between;">
+                                <div style="display:flex; gap:4px; flex-wrap:wrap;">${rolesHtml}</div>
+                                <div>${statusHtml}</div>
                             </div>
-                        </div>
-                        <div class="card-details-row" style="justify-content: space-between; align-items:center;">
-                            <div style="display:flex; gap:4px; flex-wrap:wrap;">${rolesHtml}</div>
-                            ${statusHtml}
                         </div>
                     </div>
                 `;
