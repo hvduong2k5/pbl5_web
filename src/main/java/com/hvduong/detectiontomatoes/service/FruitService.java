@@ -11,6 +11,7 @@ import com.hvduong.detectiontomatoes.repository.SystemConfigRepository;
 import com.hvduong.detectiontomatoes.websocket.WebSocketHandler;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.time.LocalDateTime;
 import java.util.Map;
@@ -25,6 +26,9 @@ public class FruitService {
     private final FruitMapper fruitMapper;
     private final WebSocketHandler webSocketHandler;
     private final SystemConfigRepository systemConfigRepository;
+
+    @Value("${minio.url}")
+    private String minioUrl;
 
     public FruitService(FruitRepository fruitRepository, FruitMapper fruitMapper, WebSocketHandler webSocketHandler, SystemConfigRepository systemConfigRepository) {
         this.fruitRepository = fruitRepository;
@@ -66,7 +70,7 @@ public class FruitService {
         List<Object[]> labelCounts = fruitRepository.countLabelsByBatchId(batchId);
         stats.put("ripe", 0);
         stats.put("unripe", 0);
-        stats.put("rotten", 0); // Defaults
+        stats.put("reject", 0); // Defaults
 
         for (Object[] row : labelCounts) {
             String label = (String) row[0];
@@ -74,7 +78,7 @@ public class FruitService {
             if (label != null) {
                 // Map green to unripe if needed, or directly use unripe
                 if (label.equals("green")) label = "unripe";
-                stats.put(label, count.intValue());
+                stats.put(label, stats.getOrDefault(label, 0) + count.intValue());
             }
         }
         return stats;
@@ -92,7 +96,7 @@ public class FruitService {
         emptyStats.put("wait", 0);
         emptyStats.put("ripe", 0);
         emptyStats.put("unripe", 0);
-        emptyStats.put("rotten", 0);
+        emptyStats.put("reject", 0);
         return emptyStats;
     }
 
@@ -210,12 +214,30 @@ public class FruitService {
         Map<String, Object> map = new HashMap<>();
         map.put("id", f.getId());
         map.put("status", f.getStatus());
+        
         map.put("label", f.getLabel());
         map.put("sortedType", f.getSortedType());
         map.put("createdAt", f.getCreatedAt() != null ? f.getCreatedAt().toString() : null);
         map.put("classifiedAt", f.getClassifiedAt() != null ? f.getClassifiedAt().toString() : null);
         map.put("sortedAt", f.getSortedAt() != null ? f.getSortedAt().toString() : null);
-        map.put("imageUrl", f.getImageUrl());
+        
+        String imageUrl = f.getImageUrl();
+        if (imageUrl != null && !imageUrl.isEmpty()) {
+            if (!imageUrl.startsWith("http://") && !imageUrl.startsWith("https://")) {
+                String baseUrl = minioUrl;
+                if (baseUrl != null) {
+                    if (baseUrl.endsWith("/")) {
+                        baseUrl = baseUrl.substring(0, baseUrl.length() - 1);
+                    }
+                    if (imageUrl.startsWith("/")) {
+                        imageUrl = baseUrl + imageUrl;
+                    } else {
+                        imageUrl = baseUrl + "/" + imageUrl;
+                    }
+                }
+            }
+        }
+        map.put("imageUrl", imageUrl);
         map.put("confidence", f.getConfidence());
         return map;
     }

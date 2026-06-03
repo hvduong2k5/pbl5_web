@@ -1,110 +1,132 @@
 async function initHistoryPage() {
     console.log('[DEBUG History] Bắt đầu initHistoryPage...');
+
+    // Init sidebar
+    initSidebar();
+
     const batchSelect = document.getElementById('batch-select');
     const historyBody = document.getElementById('history-body');
     const btnExport = document.getElementById('btn-export');
-    
-    // Render header ngay lập tức để tránh giao diện bị trống
-    renderHeader(window.location.pathname, null);
-    
+
     try {
-        console.log('[DEBUG History] Gọi API lấy danh sách Batches...');
-        // Load batches
         const batches = await API.getAllBatches();
-        console.log('[DEBUG History] Danh sách Batches nhận được:', batches);
-        
         batches.forEach(b => {
             const opt = document.createElement('option');
             opt.value = b.id;
             opt.textContent = b.name;
             batchSelect.appendChild(opt);
         });
-        
-        console.log('[DEBUG History] Gọi API lấy Current Batch để update Header...');
-        // Fetch header
-        const currentBatch = await API.getCurrentBatch();
-        renderHeader(window.location.pathname, currentBatch ? currentBatch.name : null);
     } catch (e) {
-        console.error('[ERROR History] Lỗi khi load dữ liệu History:', e);
-        renderHeader(window.location.pathname, null);
+        console.error('[ERROR History] Lỗi khi load danh sách lô:', e);
     }
-    
+
     async function loadHistory() {
         try {
             const val = batchSelect.value;
-            console.log(`[DEBUG History] Đang tải dữ liệu quả cho Batch ID: ${val}`);
             const fruits = await API.getFruitsByBatch(val);
-            console.log(`[DEBUG History] Nhận được ${fruits.length} quả từ API.`);
-            
             historyBody.innerHTML = '';
+            
+            const mobileContainer = document.getElementById('mobile-history-cards');
+            if (mobileContainer) mobileContainer.innerHTML = '';
+
+            if (fruits.length === 0) {
+                historyBody.innerHTML = `
+                    <tr>
+                        <td colspan="7" style="text-align:center; padding: 40px; color: var(--text-muted);">
+                            Không có dữ liệu
+                        </td>
+                    </tr>`;
+                if (mobileContainer) mobileContainer.innerHTML = `<div style="text-align:center; padding: 40px; color: var(--text-muted);">Không có dữ liệu</div>`;
+                return;
+            }
+
             fruits.forEach(f => {
                 const tr = document.createElement('tr');
-                
-                // Image styling for history table
-                const imgHtml = f.imageUrl 
-                    ? `<img src="${f.imageUrl}" alt="${f.id}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;">`
-                    : `<div style="width: 50px; height: 50px; background: #eee; display: flex; align-items: center; justify-content: center; border-radius: 4px; font-size: 10px; color: #888;">N/A</div>`;
-                
-                const confidenceHtml = f.confidence !== undefined && f.confidence !== null 
-                    ? `${(f.confidence * 100).toFixed(1)}%` 
+
+                const imgHtml = f.imageUrl
+                    ? `<img src="${f.imageUrl}" alt="${f.id}" class="table-img">`
+                    : `<div class="table-no-img">N/A</div>`;
+
+                const labelVi = getLabelVietnamese(f.label);
+                const badgeClass = getBadgeClass(f.label);
+
+                const confidenceHtml = f.confidence !== undefined && f.confidence !== null
+                    ? `${(f.confidence * 100).toFixed(1)}%`
                     : 'N/A';
 
+                const fmtCreated = f.createdAt ? formatDate(f.createdAt).replace('\n', '<br>') : '';
+                const fmtClassified = f.classifiedAt ? formatDate(f.classifiedAt).replace('\n', '<br>') : '';
+                const fmtSorted = f.sortedAt ? formatDate(f.sortedAt).replace('\n', '<br>') : '';
+
                 tr.innerHTML = `
-                    <td>${f.id}</td>
+                    <td style="font-weight:600;">#${f.id}</td>
                     <td>${imgHtml}</td>
-                    <td><span class="badge ${getBadgeClass(f.status)}">${f.status || ''}</span></td>
-                    <td><span class="badge ${getBadgeClass(f.label)}">${f.label ? f.label.toUpperCase() : ''}</span></td>
-                    <td>${formatDate(f.createdAt)}</td>
-                    <td>${formatDate(f.classifiedAt)}</td>
-                    <td>${formatDate(f.sortedAt)}</td>
-                    <td>${confidenceHtml}</td>
+                    <td>${f.label ? `<span class="badge ${badgeClass}">${labelVi}</span>` : ''}</td>
+                    <td style="font-size:0.85em; color:var(--text-secondary);">${fmtCreated}</td>
+                    <td style="font-size:0.85em; color:var(--text-secondary);">${fmtClassified}</td>
+                    <td style="font-size:0.85em; color:var(--text-secondary);">${fmtSorted}</td>
+                    <td style="font-weight:600;">${confidenceHtml}</td>
                 `;
                 historyBody.appendChild(tr);
+
+                if (mobileContainer) {
+                    const cardHtml = `
+                        <div class="list-card">
+                            <div class="card-img-col">
+                                ${f.imageUrl ? `<img src="${f.imageUrl}" alt="${f.id}">` : 'N/A'}
+                            </div>
+                            <div class="card-content-col">
+                                <div class="card-title-row">
+                                    <span class="card-id">#${f.id}</span>
+                                    <span class="card-time">${f.createdAt ? new Date(f.createdAt).toLocaleTimeString() : '---'}</span>
+                                </div>
+                                <div class="card-details-row">
+                                    <span class="badge ${badgeClass}">${labelVi}</span>
+                                    <span style="margin-left:auto; font-weight:600;">${confidenceHtml}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    mobileContainer.insertAdjacentHTML('beforeend', cardHtml);
+                }
             });
         } catch (e) {
             console.error('[ERROR History] Lỗi khi render bảng History:', e);
         }
     }
-    
+
+    // Export button
     if (btnExport) {
-        // Phân quyền hiển thị nút Export
         if (!hasAuthority('EXPORT_DATA') && !hasAuthority('ROLE_ADMIN')) {
             btnExport.style.display = 'none';
         } else {
             btnExport.addEventListener('click', async () => {
                 const val = batchSelect.value;
                 if (val === 'all') {
-                    alert('Vui lòng chọn một Batch cụ thể để xuất dữ liệu.');
+                    alert('Vui lòng chọn một lô cụ thể để xuất dữ liệu.');
                     return;
                 }
 
                 const originalText = btnExport.textContent;
                 btnExport.textContent = 'Đang xử lý...';
                 btnExport.disabled = true;
-                btnExport.style.opacity = '0.7';
 
                 try {
                     const blob = await API.exportBatch(val);
-                    
-                    // Tạo link tải file ảo
                     const url = window.URL.createObjectURL(blob);
                     const a = document.createElement('a');
                     a.href = url;
-                    a.download = `Batch_${val}_Export.xlsx`;
+                    a.download = `Lo_${val}_BaoCao.xlsx`;
                     document.body.appendChild(a);
                     a.click();
-                    
-                    // Dọn dẹp memory
                     window.URL.revokeObjectURL(url);
                     a.remove();
-                    console.log('[DEBUG History] Tải file Excel thành công.');
                 } catch (e) {
                     console.error('[ERROR History] Lỗi khi tải Excel:', e);
-                    alert('Có lỗi xảy ra khi xuất file Excel. Vui lòng kiểm tra lại cấu hình MinIO hoặc API.');
+                    alert('Có lỗi xảy ra khi xuất file Excel.');
                 } finally {
                     btnExport.textContent = originalText;
                     btnExport.disabled = false;
-                    btnExport.style.opacity = '1';
                 }
             });
         }
@@ -114,5 +136,5 @@ async function initHistoryPage() {
     loadHistory();
 }
 
-console.log('[DEBUG History] File history.js đã được parse. Đăng ký sự kiện DOMContentLoaded.');
 document.addEventListener('DOMContentLoaded', initHistoryPage);
+

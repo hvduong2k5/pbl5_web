@@ -1,58 +1,68 @@
-function createFruitCard(fruit) {
+function createFruitCard(fruit, queueType) {
     const el = document.createElement('div');
+
+    // All queues use card style now
     el.className = 'fruit-card';
     el.id = `fruit-${fruit.id}`;
-    
-    // Determine context based on status
-    const isQueue1 = fruit.status === 'DETECTED' || fruit.status === 'CLASSIFIED';
-    const isQueue2 = fruit.status === 'TRANSFERRED';
-    const isQueue3 = fruit.status === 'SORTED';
 
-    let displayStatus = fruit.status;
-    if (fruit.status === 'DETECTED') displayStatus = 'WAIT';
-    if (fruit.status === 'CLASSIFIED') displayStatus = 'READY';
-
-    let contentHtml = '';
-    
-    // Image
+    let imgHtml = '';
     if (fruit.imageUrl) {
-        contentHtml += `<img src="${fruit.imageUrl}" alt="${fruit.id}" class="fruit-img">`;
+        imgHtml = `
+            <div class="fruit-card-img-wrapper">
+                <img src="${fruit.imageUrl}" alt="${fruit.id}" loading="lazy">
+                <span class="fruit-card-id-overlay">ID: #${fruit.id}</span>
+            </div>`;
     } else {
-        contentHtml += `<div class="fruit-no-img">No Image</div>`;
+        imgHtml = `
+            <div class="fruit-card-img-wrapper">
+                <div class="fruit-no-img">Không có ảnh</div>
+                <span class="fruit-card-id-overlay">ID: #${fruit.id}</span>
+            </div>`;
     }
 
-    // ID
-    contentHtml += `<div class="card-id"><b>ID:</b> ${fruit.id}</div>`;
+    const labelVi = getLabelVietnamese(fruit.label);
+    const badgeClass = getBadgeClass(fruit.label);
 
-    // Queue 1 Logic
-    if (isQueue1) {
-        contentHtml += `<div><b>Status:</b> <span class="badge ${getBadgeClass(displayStatus)}">${displayStatus}</span></div>`;
-        if (fruit.label) {
-            contentHtml += `<div><b>Label:</b> <span class="badge ${getBadgeClass(fruit.label)}">${fruit.label.toUpperCase()}</span></div>`;
-        }
-        contentHtml += `<div><b>Confidence:</b> ${fruit.confidence !== undefined && fruit.confidence !== null ? (fruit.confidence * 100).toFixed(1) + '%' : 'N/A'}</div>`;
-    } 
-    // Queue 2 Logic
-    else if (isQueue2) {
-        if (fruit.label) {
-            contentHtml += `<div><b>Label:</b> <span class="badge ${getBadgeClass(fruit.label)}">${fruit.label.toUpperCase()}</span></div>`;
-        }
-        contentHtml += `<div><b>Confidence:</b> ${fruit.confidence !== undefined && fruit.confidence !== null ? (fruit.confidence * 100).toFixed(1) + '%' : 'N/A'}</div>`;
-    } 
-    // Queue 3 Logic
-    else if (isQueue3) {
-        if (fruit.label) {
-            contentHtml += `<div><b>Label:</b> <span class="badge ${getBadgeClass(fruit.label)}">${fruit.label.toUpperCase()}</span></div>`;
-        }
-        contentHtml += `<div><b>Status:</b> <span class="badge ${getBadgeClass(fruit.status)}">${fruit.status}</span></div>`;
-        contentHtml += `<div><b>Confidence:</b> ${fruit.confidence !== undefined && fruit.confidence !== null ? (fruit.confidence * 100).toFixed(1) + '%' : 'N/A'}</div>`;
-        if (fruit.sortedAt) {
-            contentHtml += `<div style="font-size: 0.8em; color: #999; margin-top: 5px;">Time: ${formatDate(fruit.sortedAt)}</div>`;
-        } else if (fruit.createdAt) {
-            contentHtml += `<div style="font-size: 0.8em; color: #999; margin-top: 5px;">Time: ${formatDate(fruit.createdAt)}</div>`;
-        }
-    }
+    const createdTime = formatTime(fruit.createdAt) || '---';
+    const classifiedTime = formatTime(fruit.classifiedAt) || '---';
+    const sortedTime = formatTime(fruit.sortedAt) || '---';
+    
+    const confidenceHtml = fruit.confidence !== undefined && fruit.confidence !== null 
+        ? (fruit.confidence * 100).toFixed(1) + '%' 
+        : '---';
 
-    el.innerHTML = contentHtml;
+    let statusText = 'Đang phân tích';
+    if (fruit.status === 'SORTED') statusText = 'Đã vào hộp';
+    else if (fruit.status === 'TRANSFERRED') statusText = 'Đang chuyển';
+    else if (fruit.status === 'CLASSIFIED') statusText = 'Đã phân loại';
+    else if (fruit.status === 'DETECTED') statusText = 'Đã phát hiện';
+
+    const bodyHtml = `
+        <div class="fruit-card-row">
+            <b>Phân loại / Trạng thái</b>
+            <span class="dot"></span>
+            ${fruit.label 
+                ? `<span class="badge ${badgeClass}">${labelVi}</span>` 
+                : `<span style="color:var(--text-muted)">${statusText}</span>`}
+        </div>
+        <div class="fruit-card-row">
+            <b>Phát hiện lúc</b>
+            <span>${createdTime}</span>
+        </div>
+        <div class="fruit-card-row">
+            <b>Phân loại lúc</b>
+            <span>${classifiedTime}</span>
+        </div>
+        <div class="fruit-card-row">
+            <b>Vào hộp lúc</b>
+            <span>${sortedTime}</span>
+        </div>
+        <div class="fruit-card-row">
+            <b>Độ chính xác</b>
+            <span>${confidenceHtml}</span>
+        </div>
+    `;
+
+    el.innerHTML = imgHtml + `<div class="fruit-card-body">${bodyHtml}</div>`;
     return el;
 }
