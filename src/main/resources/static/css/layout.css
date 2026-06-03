@@ -296,3 +296,95 @@
     outline: none;
     box-shadow: 0 0 0 3px var(--input-focus-ring);
 }
+
+/* ========== MOBILE BOTTOM NAV & RESPONSIVE ========== */
+.mobile-bottom-nav {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .sidebar-nav {
+        display: none;
+    }
+
+    .main-area {
+        margin-left: 0;
+        padding-bottom: 60px;
+    }
+
+    .mobile-bottom-nav {
+        display: flex;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 60px;
+        background-color: var(--card-bg);
+        border-top: 1px solid var(--border-color);
+        z-index: 1000;
+        justify-content: space-around;
+        align-items: center;
+        box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+    }
+
+    .mobile-nav-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: var(--text-muted);
+        text-decoration: none;
+        font-size: 0.75em;
+        font-weight: 500;
+        flex: 1;
+        height: 100%;
+        gap: 4px;
+        transition: color 0.2s;
+    }
+
+    .mobile-nav-item svg {
+        width: 24px;
+        height: 24px;
+    }
+
+    .mobile-nav-item.active {
+        color: var(--accent-color);
+        font-weight: 600;
+    }
+
+    .dashboard-layout {
+        flex-direction: column;
+        height: auto;
+    }
+    
+    .dashboard-right {
+        max-width: 100%;
+    }
+    
+    .top-bar {
+        padding: 0 16px;
+    }
+    
+    .main-content {
+        padding: 16px;
+    }
+    
+    .filter-bar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .filter-bar select {
+        width: 100%;
+    }
+    
+    .login-card {
+        padding: 24px;
+        box-shadow: none;
+        background: transparent;
+    }
+    
+    .login-body {
+        padding: 20px;
+    }
+}

@@ -23,6 +23,8 @@ function initSidebar() {
             if (hasAuthority('ROLE_ADMIN')) {
                 const adminItem = document.getElementById('nav-admin-item');
                 if (adminItem) adminItem.classList.remove('hidden');
+                const mobileAdminItem = document.getElementById('mobile-nav-system');
+                if (mobileAdminItem) mobileAdminItem.style.display = 'flex';
             }
 
             // Show history nav if has VIEW_HISTORY or ROLE_ADMIN
@@ -31,6 +33,8 @@ function initSidebar() {
                 if (historyItem) {
                     historyItem.classList.remove('hidden');
                 }
+                const mobileHistoryItem = document.getElementById('mobile-nav-history');
+                if (mobileHistoryItem) mobileHistoryItem.style.display = 'flex';
             }
         }
     } catch (e) {

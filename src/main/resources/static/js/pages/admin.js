@@ -110,7 +110,12 @@ async function loadUsers() {
             
             tr.innerHTML = `
                 <td style="font-weight:600;">#${user.id}</td>
-                <td style="font-weight:500;">${user.username}</td>
+                <td>
+                    <div class="user-cell">
+                        <div class="user-avatar-circle">${user.username.substring(0, 2).toUpperCase()}</div>
+                        <div class="user-name-text">${user.username}</div>
+                    </div>
+                </td>
                 <td>${statusHtml}</td>
                 <td style="max-width: 200px; display:flex; flex-wrap:wrap; gap:4px; align-items:center;">${rolesHtml}</td>
                 <td>

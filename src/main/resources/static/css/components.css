@@ -650,9 +650,141 @@
     margin: 0;
 }
 
+@media (max-width: 768px) {
+    .section-card-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 16px;
+    }
+    .section-card-header .btn {
+        width: 100%;
+        padding: 12px;
+    }
+}
+
 /* ========== ACTION BUTTONS IN TABLE ========== */
 .action-btns {
     display: flex;
     gap: 6px;
     align-items: center;
+}
+
+/* ========== RESPONSIVE TABLES (CARDS) ========== */
+@media (max-width: 768px) {
+    .table-container {
+        border: none;
+        box-shadow: none;
+        background: transparent;
+        overflow: visible;
+    }
+    
+    .table-container table,
+    .table-container thead,
+    .table-container tbody,
+    .table-container th,
+    .table-container td,
+    .table-container tr {
+        display: block;
+        width: 100%;
+    }
+    
+    .table-container thead tr {
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+    }
+    
+    .table-container tr {
+        background-color: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        margin-bottom: 16px;
+        box-shadow: var(--card-shadow);
+        position: relative;
+        padding: 16px;
+    }
+    
+    .table-container td {
+        border: none;
+        padding: 4px 0;
+    }
+    
+    .table-history tr {
+        display: grid;
+        grid-template-columns: 80px 1fr;
+        grid-template-areas: 
+            "img id"
+            "img status"
+            "img batch"
+            "img time";
+        gap: 2px 16px;
+        align-items: center;
+    }
+    
+    .table-history td { border-bottom: none !important; }
+    .table-history td:nth-child(1) { grid-area: id; font-weight: 600; font-size: 1.05em; color: var(--text-color); }
+    .table-history td:nth-child(2) { grid-area: time; color: var(--text-muted); font-size: 0.85em; text-align: right; position: absolute; top: 16px; right: 16px; }
+    .table-history td:nth-child(3) { grid-area: batch; color: var(--text-secondary); font-size: 0.9em; }
+    .table-history td:nth-child(4) { grid-area: status; display: flex; align-items: center;}
+    .table-history td:nth-child(5) { grid-area: img; padding: 0;}
+    .table-history td:nth-child(5) img {
+        width: 80px !important;
+        height: 80px !important;
+        border-radius: 8px;
+        margin: 0;
+    }
+    
+    .table-users tr {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        grid-template-areas: 
+            "name actions"
+            "status actions"
+            "roles actions";
+        align-items: center;
+        gap: 4px 12px;
+    }
+    
+    .table-users td:nth-child(1) { display: none; }
+    .table-users td:nth-child(2) { grid-area: name; }
+    .table-users td:nth-child(3) { grid-area: status; }
+    .table-users td:nth-child(4) { grid-area: roles; margin-top: 8px; }
+    .table-users td:nth-child(5) { grid-area: actions; display: flex; justify-content: flex-end; }
+    
+    .table-roles tr {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        grid-template-areas: 
+            "name actions"
+            "roles actions";
+        align-items: center;
+        gap: 8px;
+    }
+    .table-roles td:nth-child(1) { display: none; }
+    .table-roles td:nth-child(2) { grid-area: name; font-weight: 700; font-size: 1.1em; color: var(--primary-color); }
+    .table-roles td:nth-child(3) { grid-area: roles; }
+    .table-roles td:nth-child(4) { grid-area: actions; display: flex; justify-content: flex-end; }
+}
+
+.user-cell {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.user-avatar-circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: var(--sidebar-active-bg);
+    color: var(--accent-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.9em;
+}
+.user-name-text {
+    font-weight: 600;
+    font-size: 1.05em;
+    color: var(--text-color);
 }
