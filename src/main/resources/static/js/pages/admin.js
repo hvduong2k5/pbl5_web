@@ -97,10 +97,11 @@ async function loadUsers() {
             const tr = document.createElement('tr');
             
             const rolesHtml = user.roles.map(r => {
+                const roleName = typeof r === 'string' ? r : r.name;
                 let badgeClass = 'role-default';
-                if (r.name === 'ADMIN') badgeClass = 'role-admin';
-                else if (r.name === 'OPERATOR') badgeClass = 'role-operator';
-                return `<span class="badge ${badgeClass}" style="margin-right: 4px; margin-bottom: 4px;">${r.name}</span>`;
+                if (roleName === 'ADMIN') badgeClass = 'role-admin';
+                else if (roleName === 'OPERATOR') badgeClass = 'role-operator';
+                return `<span class="badge ${badgeClass}" style="margin-right: 4px; margin-bottom: 4px;">${roleName}</span>`;
             }).join('');
             
             const statusHtml = user.enabled 
@@ -204,7 +205,7 @@ async function openEditUserModal(user) {
     document.getElementById('enabled').checked = user.enabled;
     document.getElementById('user-error').classList.add('hidden');
     
-    const userRoleNames = user.roles.map(r => r.name);
+    const userRoleNames = user.roles.map(r => typeof r === 'string' ? r : r.name);
     await populateRoleCheckboxes(userRoleNames);
     
     document.getElementById('user-modal').classList.remove('hidden');
