@@ -673,10 +673,16 @@
     }
     .header-actions .search-bar {
         width: 100%;
+        display: flex;
     }
     .header-actions .search-bar input {
         flex: 1;
-        width: 100%;
+        width: auto;
+    }
+    .header-actions .search-bar .btn {
+        width: auto;
+        padding: 8px 16px;
+        white-space: nowrap;
     }
 }
 
