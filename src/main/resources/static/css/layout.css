@@ -158,7 +158,6 @@
 .icon-btn svg { width: 20px; height: 20px; }
 
 .mobile-only { display: none; }
-.desktop-only { display: flex; }
 
 .dropdown-wrapper {
     position: relative;
