@@ -880,15 +880,7 @@
         position: relative;
         color: var(--text-color);
     }
-    .queue.mobile-full .queue-header::after {
-        content: '● Trực tuyến';
-        position: absolute;
-        right: 0;
-        color: var(--badge-ripe);
-        font-size: 0.7em;
-        font-weight: 600;
-    }
-    .queue.mobile-full .queue-header .queue-count { display: none; }
+    .queue.mobile-full .queue-count { display: none; }
     .queue.mobile-full .queue-icon { display: none; }
     .queue.mobile-full .queue-body {
         padding: 0;
