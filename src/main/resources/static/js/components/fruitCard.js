@@ -1,27 +1,7 @@
 function createFruitCard(fruit, queueType) {
     const el = document.createElement('div');
     
-    // Queue 3 (sorted) - compact list style
-    if (queueType === 'sorted') {
-        el.className = 'sorted-item';
-        const labelVi = getLabelVietnamese(fruit.label);
-        const badgeClass = getBadgeClass(fruit.label);
-        const confidence = fruit.confidence !== undefined && fruit.confidence !== null
-            ? (fruit.confidence * 100).toFixed(0) + '%' : 'N/A';
-        const time = formatTime(fruit.sortedAt || fruit.classifiedAt || fruit.createdAt);
-        
-        el.innerHTML = `
-            <span class="sorted-item-id">ID: #${fruit.id}</span>
-            <span class="sorted-item-time">${time}</span>
-            <span class="sorted-item-label">
-                ${fruit.label ? `<span class="badge ${badgeClass}">${labelVi}</span>` : ''}
-            </span>
-            <span class="sorted-item-confidence">${confidence}</span>
-        `;
-        return el;
-    }
-    
-    // Queue 1 (detected/classified) and Queue 2 (transfer) - card style
+    // All queues use card style now
     el.className = 'fruit-card';
     el.id = `fruit-${fruit.id}`;
 
@@ -72,6 +52,29 @@ function createFruitCard(fruit, queueType) {
                 ${fruit.label 
                     ? `<span class="badge ${badgeClass}">${labelVi}</span>` 
                     : '<span style="color:var(--text-muted)">---</span>'}
+            </div>
+            <div class="fruit-card-row">
+                <b>Độ chín</b>
+                <span>${fruit.confidence !== undefined && fruit.confidence !== null ? (fruit.confidence * 100).toFixed(0) + '%' : '---'}</span>
+            </div>
+        `;
+    } else if (queueType === 'sorted') {
+        // Queue 3 - Sorted
+        const labelVi = getLabelVietnamese(fruit.label);
+        const badgeClass = getBadgeClass(fruit.label);
+        const time = formatTime(fruit.sortedAt || fruit.classifiedAt || fruit.createdAt);
+        
+        bodyHtml = `
+            <div class="fruit-card-row">
+                <b>Phân loại</b>
+                <span class="dot"></span>
+                ${fruit.label 
+                    ? `<span class="badge ${badgeClass}">${labelVi}</span>` 
+                    : '<span style="color:var(--text-muted)">---</span>'}
+            </div>
+            <div class="fruit-card-row">
+                <b>Thời gian</b>
+                <span>${time}</span>
             </div>
             <div class="fruit-card-row">
                 <b>Độ chín</b>
