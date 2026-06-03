@@ -22,8 +22,20 @@ public class FruitMapper {
 
     public FruitEventDTO toEventDTO(Fruit fruit, String event) {
         String imageUrl = fruit.getImageUrl();
-        if (imageUrl != null) {
-            imageUrl = minioUrl + "/" + imageUrl;
+        if (imageUrl != null && !imageUrl.isEmpty()) {
+            if (!imageUrl.startsWith("http://") && !imageUrl.startsWith("https://")) {
+                String baseUrl = minioUrl;
+                if (baseUrl != null) {
+                    if (baseUrl.endsWith("/")) {
+                        baseUrl = baseUrl.substring(0, baseUrl.length() - 1);
+                    }
+                    if (imageUrl.startsWith("/")) {
+                        imageUrl = baseUrl + imageUrl;
+                    } else {
+                        imageUrl = baseUrl + "/" + imageUrl;
+                    }
+                }
+            }
         }
         return FruitEventDTO.builder()
                 .event(event)

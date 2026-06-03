@@ -11,6 +11,7 @@ import com.hvduong.detectiontomatoes.repository.SystemConfigRepository;
 import com.hvduong.detectiontomatoes.websocket.WebSocketHandler;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.time.LocalDateTime;
 import java.util.Map;
@@ -25,6 +26,9 @@ public class FruitService {
     private final FruitMapper fruitMapper;
     private final WebSocketHandler webSocketHandler;
     private final SystemConfigRepository systemConfigRepository;
+
+    @Value("${minio.url}")
+    private String minioUrl;
 
     public FruitService(FruitRepository fruitRepository, FruitMapper fruitMapper, WebSocketHandler webSocketHandler, SystemConfigRepository systemConfigRepository) {
         this.fruitRepository = fruitRepository;
@@ -215,7 +219,24 @@ public class FruitService {
         map.put("createdAt", f.getCreatedAt() != null ? f.getCreatedAt().toString() : null);
         map.put("classifiedAt", f.getClassifiedAt() != null ? f.getClassifiedAt().toString() : null);
         map.put("sortedAt", f.getSortedAt() != null ? f.getSortedAt().toString() : null);
-        map.put("imageUrl", f.getImageUrl());
+        
+        String imageUrl = f.getImageUrl();
+        if (imageUrl != null && !imageUrl.isEmpty()) {
+            if (!imageUrl.startsWith("http://") && !imageUrl.startsWith("https://")) {
+                String baseUrl = minioUrl;
+                if (baseUrl != null) {
+                    if (baseUrl.endsWith("/")) {
+                        baseUrl = baseUrl.substring(0, baseUrl.length() - 1);
+                    }
+                    if (imageUrl.startsWith("/")) {
+                        imageUrl = baseUrl + imageUrl;
+                    } else {
+                        imageUrl = baseUrl + "/" + imageUrl;
+                    }
+                }
+            }
+        }
+        map.put("imageUrl", imageUrl);
         map.put("confidence", f.getConfidence());
         return map;
     }
