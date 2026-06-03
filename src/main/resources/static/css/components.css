@@ -791,7 +791,7 @@
 
 /* ========== DASHBOARD MOBILE SPECIFIC ========== */
 @media (max-width: 768px) {
-    #system-status-panel, #batch-info-panel { display: none; }
+    #batch-info-panel { display: none; }
     
     #stats-container {
         border: none;
@@ -821,14 +821,47 @@
         gap: 8px;
     }
     
-    .stats-list li.stat-wait { display: none; }
     .stats-list li.stat-total { border-top-color: var(--accent-color); }
+    .stats-list li.stat-wait { border-top-color: var(--badge-detected); }
     .stats-list li.stat-ripe { border-top-color: var(--badge-ripe); }
     .stats-list li.stat-unripe { border-top-color: var(--badge-unripe); }
     .stats-list li.stat-reject { border-top-color: var(--badge-reject); }
     
     .stats-list li .stats-label { font-size: 0.95em; }
     .stats-list li .stats-value { font-size: 1.8em; }
+    
+    /* Queue Tabs */
+    .mobile-queue-tabs {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 16px;
+        overflow-x: auto;
+        padding-bottom: 4px;
+    }
+    .mobile-queue-tabs::-webkit-scrollbar { display: none; }
+    .mobile-queue-tabs .queue-tab {
+        padding: 8px 16px;
+        border-radius: 20px;
+        border: 1px solid var(--border-color);
+        background: var(--card-bg);
+        color: var(--text-color);
+        white-space: nowrap;
+        font-weight: 600;
+        font-size: 0.85em;
+        cursor: pointer;
+    }
+    .mobile-queue-tabs .queue-tab.active {
+        background: var(--primary-color);
+        color: white;
+        border-color: var(--primary-color);
+    }
+    
+    .dashboard-queues .queue.queue-mobile-hidden {
+        display: none !important;
+    }
+    .dashboard-queues .queue.active-mobile-queue {
+        display: flex !important;
+    }
     
     .queue.mobile-full {
         border: none;
