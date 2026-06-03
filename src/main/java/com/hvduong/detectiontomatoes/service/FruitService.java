@@ -78,7 +78,6 @@ public class FruitService {
             if (label != null) {
                 // Map green to unripe if needed, or directly use unripe
                 if (label.equals("green")) label = "unripe";
-                if (label.equals("rotten")) label = "reject";
                 stats.put(label, stats.getOrDefault(label, 0) + count.intValue());
             }
         }
@@ -216,11 +215,7 @@ public class FruitService {
         map.put("id", f.getId());
         map.put("status", f.getStatus());
         
-        String label = f.getLabel();
-        if ("rotten".equalsIgnoreCase(label)) {
-            label = "reject";
-        }
-        map.put("label", label);
+        map.put("label", f.getLabel());
         map.put("sortedType", f.getSortedType());
         map.put("createdAt", f.getCreatedAt() != null ? f.getCreatedAt().toString() : null);
         map.put("classifiedAt", f.getClassifiedAt() != null ? f.getClassifiedAt().toString() : null);
