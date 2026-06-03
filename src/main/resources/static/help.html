@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hướng Dẫn Sử Dụng - Hệ Thống Phân Loại Cà Chua</title>
+    <meta name="description" content="Hướng dẫn sử dụng hệ thống phân loại">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/help.css">
+</head>
+<body>
+    <div class="app-wrapper">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar-nav" id="sidebar-nav">
+            <div class="sidebar-logo">Hệ thống phân loại cà chua</div>
+            <ul class="sidebar-menu">
+                <li><a href="/" id="nav-home"><span class="nav-icon">📊</span> Giám sát</a></li>
+                <li><a href="/history.html" id="nav-history"><span class="nav-icon">🕐</span> Lịch sử</a></li>
+                <li id="nav-admin-item" class="hidden"><a href="/admin.html" id="nav-admin"><span class="nav-icon">👥</span> Quản lý người dùng</a></li>
+            </ul>
+            <div class="sidebar-actions" id="sidebar-actions">
+                <button id="btn-new-batch" class="btn-new-batch">+ Tạo mới</button>
+                <a href="/help.html" class="sidebar-link active" id="nav-help">
+                    <span>ℹ️</span> Trợ giúp
+                </a>
+                <button class="sidebar-link logout" id="btn-logout">
+                    <span>↪️</span> Đăng xuất
+                </button>
+            </div>
+        </nav>
+
+        <!-- Main Area -->
+        <div class="main-area">
+            <!-- Top Bar -->
+            <div class="top-bar">
+                <button class="theme-toggle-btn" title="Chuyển đổi giao diện">
+                    <span class="theme-icon-sun">☀️</span>
+                    <span class="theme-icon-moon">🌙</span>
+                </button>
+                <div class="user-info" id="user-info">
+                    <span id="user-display-name">Người dùng</span>
+                    <div class="user-avatar" id="user-avatar">👤</div>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="main-content">
+                <div class="page-content">
+                    <h1 class="page-title">Hướng Dẫn Sử Dụng Hệ Thống</h1>
+
+                    <div class="help-container">
+                        <!-- Search Bar -->
+                        <div class="help-search-container">
+                            <span class="help-search-icon">🔍</span>
+                            <input type="text" class="help-search-input" placeholder="Tìm kiếm hướng dẫn...">
+                        </div>
+
+                        <!-- Categories -->
+                        <div class="help-categories">
+                            <div class="help-category-card active">
+                                <span class="help-category-icon">🚀</span>
+                                <span>Bắt đầu nhanh</span>
+                            </div>
+                            <div class="help-category-card">
+                                <span class="help-category-icon">⚙️</span>
+                                <span>Vận hành hệ thống</span>
+                            </div>
+                            <div class="help-category-card">
+                                <span class="help-category-icon">🛠️</span>
+                                <span>Xử lý sự cố</span>
+                            </div>
+                            <div class="help-category-card">
+                                <span class="help-category-icon">❓</span>
+                                <span>Câu hỏi thường gặp</span>
+                            </div>
+                        </div>
+
+                        <!-- Content Panel -->
+                        <div class="help-content-panel">
+                            <div class="help-content-title">Quy trình phân loại</div>
+                            
+                            <div class="help-step-list">
+                                <!-- Step 1 -->
+                                <div class="help-step-item">
+                                    <div class="help-step-icon">🔌</div>
+                                    <div class="help-step-content">
+                                        <h3>Bước 1 - Kiểm tra kết nối</h3>
+                                        <p>Đảm bảo tất cả các thiết bị cảm biến và camera đã được kết nối đúng cách và hoạt động ổn định trước khi khởi động hệ thống phân loại.</p>
+                                    </div>
+                                </div>
+
+                                <!-- Step 2 -->
+                                <div class="help-step-item">
+                                    <div class="help-step-icon">📦</div>
+                                    <div class="help-step-content">
+                                        <h3>Bước 2 - Tạo lô mới</h3>
+                                        <p>Nhấp vào nút "Tạo mới" trên thanh bên để bắt đầu một lô phân loại mới, nhập thông tin cần thiết để hệ thống bắt đầu ghi nhận dữ liệu.</p>
+                                    </div>
+                                </div>
+
+                                <!-- Step 3 -->
+                                <div class="help-step-item">
+                                    <div class="help-step-icon">💻</div>
+                                    <div class="help-step-content">
+                                        <h3>Bước 3 - Theo dõi thời gian thực</h3>
+                                        <p>Quan sát quá trình phân loại trên màn hình "Giám sát" và theo dõi các số liệu thống kê trực tiếp cũng như hoạt động của băng chuyền.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/utils/theme.js"></script>
+    <script src="js/utils/constants.js"></script>
+    <script src="js/utils/helpers.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/components/header.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            initSidebar();
+            
+            // Simple logic to switch active cards (visual only for now)
+            const cards = document.querySelectorAll('.help-category-card');
+            cards.forEach(card => {
+                card.addEventListener('click', () => {
+                    cards.forEach(c => c.classList.remove('active'));
+                    card.classList.add('active');
+                });
+            });
+        });
+    </script>
+</body>
+</html>
