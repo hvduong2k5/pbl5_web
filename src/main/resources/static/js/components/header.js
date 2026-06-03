@@ -1,104 +1,54 @@
-function renderHeader(currentPath, currentBatchName) {
-    const container = document.getElementById('header-container');
-    if (!container) return;
-    
-    const isHome = currentPath === 'home' || currentPath === '/' || currentPath.endsWith('index.html');
-    const isHistory = currentPath.endsWith('history.html');
-    const isAdmin = currentPath.endsWith('admin.html');
-    const isLogin = currentPath.endsWith('login.html');
-    
+/**
+ * Header / Sidebar initialization for pages with sidebar layout.
+ * Sets up user info in top bar, admin nav visibility, logout, and new batch button.
+ */
+function initSidebar() {
     const token = localStorage.getItem('accessToken');
-    let userMenuHtml = '';
-    let adminLinkHtml = '';
-    
-    if (token && !isLogin) {
-        try {
-            // Giải mã JWT để lấy username và authorities thông qua hàm an toàn parseJwt trong helpers.js
-            const payload = typeof parseJwt === 'function' ? parseJwt(token) : JSON.parse(atob(token.split('.')[1]));
-            if (payload) {
-                const username = payload.sub || 'Tài khoản';
-                const authorities = payload.authorities || [];
-                
-                // Tìm role chính (bắt đầu bằng ROLE_)
-                let mainRole = 'USER';
-                const roleAuth = authorities.find(a => a.startsWith('ROLE_'));
-                if (roleAuth) {
-                    mainRole = roleAuth.substring(5); // Cắt bỏ chữ 'ROLE_'
-                }
-                
-                userMenuHtml = `
-                    <div class="user-menu" style="margin-left: 15px;">
-                        <button id="user-menu-btn" class="user-btn">
-                            <span>${username}</span>
-                            <span style="font-size: 0.8em;">▼</span>
-                        </button>
-                        <div id="user-dropdown" class="dropdown-content">
-                            <div class="dropdown-header">
-                                <span class="username">${username}</span>
-                                <span class="role-badge">${mainRole}</span>
-                            </div>
-                            <a href="#" id="menu-settings">Cài đặt (Đổi mật khẩu)</a>
-                            <a href="#" id="menu-logout" class="logout-btn">Đăng xuất</a>
-                        </div>
-                    </div>
-                `;
-                
-                if (hasAuthority('ROLE_ADMIN')) {
-                    adminLinkHtml = `<a href="/admin.html" class="${isAdmin ? 'active' : ''}">Admin Console</a>`;
-                }
+    if (!token) return;
+
+    try {
+        const payload = typeof parseJwt === 'function' ? parseJwt(token) : JSON.parse(atob(token.split('.')[1]));
+        if (payload) {
+            const username = payload.sub || 'Người dùng';
+            
+            // Update user display name
+            const nameEl = document.getElementById('user-display-name');
+            if (nameEl) nameEl.textContent = username;
+
+            // Update avatar
+            const avatarEl = document.getElementById('user-avatar');
+            if (avatarEl) avatarEl.textContent = username.charAt(0).toUpperCase();
+
+            // Show admin nav if has ROLE_ADMIN
+            if (hasAuthority('ROLE_ADMIN')) {
+                const adminItem = document.getElementById('nav-admin-item');
+                if (adminItem) adminItem.classList.remove('hidden');
             }
-        } catch (e) {
-            console.error('Không thể giải mã token', e);
+        }
+    } catch (e) {
+        console.error('Không thể giải mã token', e);
+    }
+
+    // Logout button
+    const logoutBtn = document.getElementById('btn-logout');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', () => {
+            localStorage.removeItem('accessToken');
+            window.location.href = '/login.html';
+        });
+    }
+
+    // New batch button visibility (only if has permission)
+    const btnNewBatch = document.getElementById('btn-new-batch');
+    if (btnNewBatch) {
+        if (!hasAuthority('MANAGE_BATCH') && !hasAuthority('ROLE_ADMIN')) {
+            btnNewBatch.style.display = 'none';
         }
     }
-    
-    container.innerHTML = `
-        <header class="app-header">
-            <div class="nav-links">
-                <a href="/" class="${isHome ? 'active' : ''}">Home</a>
-                <a href="/history.html" class="${isHistory ? 'active' : ''}">History</a>
-                ${adminLinkHtml}
-            </div>
-            <div class="header-right">
-                <div class="current-batch">
-                    ${currentBatchName ? `Current Batch: ${currentBatchName}` : 'No Active Batch'}
-                </div>
-                ${userMenuHtml}
-            </div>
-        </header>
-    `;
-    
-    // Gắn sự kiện cho User Menu
-    if (token && !isLogin) {
-        const userBtn = document.getElementById('user-menu-btn');
-        const dropdown = document.getElementById('user-dropdown');
-        
-        if (userBtn && dropdown) {
-            userBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                dropdown.classList.toggle('show');
-            });
-            
-            // Đóng dropdown khi click ra ngoài
-            window.addEventListener('click', (e) => {
-                if (!userBtn.contains(e.target) && !dropdown.contains(e.target)) {
-                    dropdown.classList.remove('show');
-                }
-            });
-            
-            // Xử lý Cài đặt
-            document.getElementById('menu-settings').addEventListener('click', (e) => {
-                e.preventDefault();
-                alert('Tính năng đổi mật khẩu đang được phát triển!');
-                dropdown.classList.remove('show');
-            });
-            
-            // Xử lý Đăng xuất
-            document.getElementById('menu-logout').addEventListener('click', (e) => {
-                e.preventDefault();
-                localStorage.removeItem('accessToken');
-                window.location.href = '/login.html';
-            });
-        }
-    }
+}
+
+// Legacy function - kept for backward compatibility but now a no-op
+function renderHeader(currentPath, currentBatchName) {
+    // Sidebar is now static in HTML; this function initializes sidebar state
+    initSidebar();
 }

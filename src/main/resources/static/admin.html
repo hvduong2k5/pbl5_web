@@ -1,173 +1,184 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Console - Tomato Detection System</title>
+    <title>Quản lý - Hệ Thống Phân Loại Cà Chua</title>
+    <meta name="description" content="Quản lý người dùng và vai trò hệ thống">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/layout.css">
     <link rel="stylesheet" href="css/components.css">
-    <style>
-        .pagination-container {
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
-            margin-top: 10px;
-            gap: 10px;
-        }
-        .pagination-container span {
-            font-size: 0.9em;
-        }
-        .search-bar {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .search-bar input {
-            padding: 8px 12px;
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
-            font-size: 0.9em;
-            width: 250px;
-        }
-    </style>
 </head>
 <body>
-    <div id="header-container"></div>
-    <main class="history-layout">
+    <div class="app-wrapper">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar-nav" id="sidebar-nav">
+            <div class="sidebar-logo">Hệ thống phân loại cà chua</div>
+            <ul class="sidebar-menu">
+                <li><a href="/" id="nav-home"><span class="nav-icon">📊</span> Giám sát</a></li>
+                <li><a href="/history.html" id="nav-history"><span class="nav-icon">🕐</span> Lịch sử</a></li>
+                <li id="nav-admin-item"><a href="/admin.html" class="active" id="nav-admin"><span class="nav-icon">👥</span> Quản lý người dùng</a></li>
+            </ul>
+            <div class="sidebar-actions" id="sidebar-actions">
+                <button id="btn-new-batch" class="btn-new-batch">+ Tạo mới</button>
+                <button class="sidebar-link" onclick="alert('Tính năng trợ giúp đang phát triển!')">
+                    <span>ℹ️</span> Trợ giúp
+                </button>
+                <button class="sidebar-link logout" id="btn-logout">
+                    <span>↪️</span> Đăng xuất
+                </button>
+            </div>
+        </nav>
 
-        <!-- User Management -->
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-            <div style="display: flex; align-items: center; gap: 20px;">
-                <h2>User Management</h2>
-                <div class="search-bar">
-                    <input type="text" id="user-search-input" placeholder="Tìm kiếm Username..." />
-                    <button id="btn-user-search" class="btn btn-secondary" style="width: auto; margin: 0; padding: 8px 15px;">Tìm</button>
+        <!-- Main Area -->
+        <div class="main-area">
+            <!-- Top Bar -->
+            <div class="top-bar">
+                <button class="theme-toggle-btn" title="Chuyển đổi giao diện">
+                    <span class="theme-icon-sun">☀️</span>
+                    <span class="theme-icon-moon">🌙</span>
+                </button>
+                <div class="user-info" id="user-info">
+                    <span id="user-display-name">Người dùng</span>
+                    <div class="user-avatar" id="user-avatar">👤</div>
                 </div>
             </div>
-            <button id="btn-add-user" class="btn btn-primary" style="width: auto; margin: 0; padding: 8px 15px;">Add New User</button>
-        </div>
-        <div class="history-table-container" style="overflow-x: auto;">
-            <table class="table" id="users-table">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Username</th>
-                        <th>Enabled</th>
-                        <th>Roles</th>
-                        <th>Created At</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="user-body">
-                </tbody>
-            </table>
-        </div>
-        <div class="pagination-container">
-            <button id="btn-user-prev" class="btn btn-secondary" style="width: auto; margin: 0; padding: 4px 10px;" disabled>Prev</button>
-            <span id="user-page-info">Page 1 of 1</span>
-            <button id="btn-user-next" class="btn btn-secondary" style="width: auto; margin: 0; padding: 4px 10px;" disabled>Next</button>
-        </div>
 
-        <hr style="margin: 30px 0; border: 0; border-top: 1px solid var(--border-color);">
+            <!-- Main Content -->
+            <div class="main-content">
+                <div class="page-content">
 
-        <!-- Role Management -->
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-            <h2>Role Management</h2>
-            <button id="btn-add-role" class="btn btn-primary" style="width: auto; margin: 0; padding: 8px 15px;">Create New Role</button>
-        </div>
-
-        <div class="history-table-container" style="overflow-x: auto; margin-top: 15px;">
-            <table class="table" id="roles-table">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Role Name</th>
-                        <th>Permissions</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="role-body">
-                </tbody>
-            </table>
-        </div>
-        <div class="pagination-container">
-            <button id="btn-role-prev" class="btn btn-secondary" style="width: auto; margin: 0; padding: 4px 10px;" disabled>Prev</button>
-            <span id="role-page-info">Page 1 of 1</span>
-            <button id="btn-role-next" class="btn btn-secondary" style="width: auto; margin: 0; padding: 4px 10px;" disabled>Next</button>
-        </div>
-
-        <!-- Modals -->
-
-        <!-- Add/Edit User Modal -->
-        <div id="user-modal" class="modal-overlay hidden">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3 id="user-modal-title">Create New User</h3>
-                    <button class="modal-close" onclick="closeModal('user-modal')">&times;</button>
-                </div>
-                <form id="user-form">
-                    <div class="modal-body">
-                        <div id="user-error" class="error-alert hidden"></div>
-                        <input type="hidden" id="userId" />
-                        <div class="form-group">
-                            <label for="username">Username (min 3 chars)</label>
-                            <input type="text" id="username" name="username" class="form-control" required />
-                        </div>
-                        <div class="form-group">
-                            <label for="password">Password (min 6 chars, leave blank to keep unchanged)</label>
-                            <input type="password" id="password" name="password" class="form-control" />
-                        </div>
-                        <div class="form-group checkbox-item">
-                            <input type="checkbox" id="enabled" name="enabled" checked />
-                            <label for="enabled">Account Enabled</label>
-                        </div>
-                        <div class="form-group">
-                            <label>Assign Roles</label>
-                            <div class="checkbox-list" id="role-checkboxes">
-                                <!-- Roles will be populated here -->
+                    <!-- User Management -->
+                    <div class="section-card">
+                        <div class="section-card-header">
+                            <h2>Quản lý người dùng</h2>
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <div class="search-bar">
+                                    <input type="text" id="user-search-input" placeholder="Tìm kiếm Username..." />
+                                    <button id="btn-user-search" class="btn btn-secondary btn-sm">Tìm</button>
+                                </div>
+                                <button id="btn-add-user" class="btn btn-outline btn-sm">Thêm người dùng mới</button>
                             </div>
                         </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" style="width: auto; margin:0;" onclick="closeModal('user-modal')">Cancel</button>
-                        <button type="submit" class="btn btn-primary" style="width: auto; margin:0;">Save User</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-
-        <!-- Add/Edit Role Modal -->
-        <div id="role-modal" class="modal-overlay hidden">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3 id="role-modal-title">Create New Role</h3>
-                    <button class="modal-close" onclick="closeModal('role-modal')">&times;</button>
-                </div>
-                <form id="role-form">
-                    <div class="modal-body">
-                        <div id="role-error" class="error-alert hidden"></div>
-                        <input type="hidden" id="roleId" />
-                        <div class="form-group">
-                            <label for="roleName">Role Name</label>
-                            <input type="text" id="roleName" name="roleName" class="form-control" placeholder="e.g. MANAGER" required />
+                        <div class="table-container">
+                            <table class="table" id="users-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Tên đăng nhập</th>
+                                        <th>Trạng thái</th>
+                                        <th>Vai trò</th>
+                                        <th>Hành động</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="user-body">
+                                </tbody>
+                            </table>
                         </div>
-                        <div class="form-group">
-                            <label>Assign Permissions</label>
-                            <div class="checkbox-list" id="permission-checkboxes">
-                                <!-- Permissions will be populated here -->
+                        <div class="pagination-container">
+                            <button id="btn-user-prev" class="btn btn-outline btn-sm" disabled>Prev</button>
+                            <span id="user-page-info">Page 1 of 1</span>
+                            <button id="btn-user-next" class="btn btn-outline btn-sm" disabled>Next</button>
+                        </div>
+                    </div>
+
+                    <!-- Role Management -->
+                    <div class="section-card">
+                        <div class="section-card-header">
+                            <h2>Quản lý vai trò</h2>
+                            <button id="btn-add-role" class="btn btn-outline btn-sm">Tạo vai trò mới</button>
+                        </div>
+                        <div class="table-container">
+                            <table class="table" id="roles-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Tên vai trò</th>
+                                        <th>Quyền hạn</th>
+                                        <th>Hành động</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="role-body">
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="pagination-container">
+                            <button id="btn-role-prev" class="btn btn-outline btn-sm" disabled>Prev</button>
+                            <span id="role-page-info">Page 1 of 1</span>
+                            <button id="btn-role-next" class="btn btn-outline btn-sm" disabled>Next</button>
+                        </div>
+                    </div>
+
+                    <!-- User Modal -->
+                    <div id="user-modal" class="modal-overlay hidden">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h3 id="user-modal-title">Thêm người dùng mới</h3>
+                                <button class="modal-close" onclick="closeModal('user-modal')">&times;</button>
                             </div>
+                            <form id="user-form">
+                                <div class="modal-body">
+                                    <div id="user-error" class="error-alert hidden"></div>
+                                    <input type="hidden" id="userId" />
+                                    <div class="form-group">
+                                        <label for="username">Tên đăng nhập (tối thiểu 3 ký tự)</label>
+                                        <input type="text" id="username" name="username" class="form-control" required />
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="password">Mật khẩu (tối thiểu 6 ký tự)</label>
+                                        <input type="password" id="password" name="password" class="form-control" />
+                                    </div>
+                                    <div class="form-group checkbox-item">
+                                        <input type="checkbox" id="enabled" name="enabled" checked />
+                                        <label for="enabled">Kích hoạt tài khoản</label>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Gán vai trò</label>
+                                        <div class="checkbox-list" id="role-checkboxes"></div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" onclick="closeModal('user-modal')">Hủy</button>
+                                    <button type="submit" class="btn btn-primary">Lưu người dùng</button>
+                                </div>
+                            </form>
                         </div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" style="width: auto; margin:0;" onclick="closeModal('role-modal')">Cancel</button>
-                        <button type="submit" class="btn btn-primary" style="width: auto; margin:0;">Save Role</button>
+
+                    <!-- Role Modal -->
+                    <div id="role-modal" class="modal-overlay hidden">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h3 id="role-modal-title">Tạo vai trò mới</h3>
+                                <button class="modal-close" onclick="closeModal('role-modal')">&times;</button>
+                            </div>
+                            <form id="role-form">
+                                <div class="modal-body">
+                                    <div id="role-error" class="error-alert hidden"></div>
+                                    <input type="hidden" id="roleId" />
+                                    <div class="form-group">
+                                        <label for="roleName">Tên vai trò</label>
+                                        <input type="text" id="roleName" name="roleName" class="form-control" placeholder="VD: MANAGER" required />
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Gán quyền hạn</label>
+                                        <div class="checkbox-list" id="permission-checkboxes"></div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" onclick="closeModal('role-modal')">Hủy</button>
+                                    <button type="submit" class="btn btn-primary">Lưu vai trò</button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
-                </form>
+
+                </div>
             </div>
         </div>
-    </main>
+    </div>
 
+    <script src="js/utils/theme.js"></script>
     <script src="js/utils/constants.js"></script>
     <script src="js/utils/helpers.js"></script>
     <script src="js/api.js"></script>

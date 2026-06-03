@@ -1,47 +1,91 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>History - Tomato Detection System</title>
+    <title>Lịch sử - Hệ Thống Phân Loại Cà Chua</title>
+    <meta name="description" content="Lịch sử phân loại cà chua chi tiết">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/layout.css">
     <link rel="stylesheet" href="css/components.css">
 </head>
 <body>
-    <div id="header-container"></div>
-    <main class="history-layout">
-        <div class="filter-bar" style="display: flex; align-items: center; justify-content: space-between;">
-            <div>
-                <label for="batch-select">Filter by Batch: </label>
-                <select id="batch-select">
-                    <option value="all">All</option>
-                </select>
+    <div class="app-wrapper">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar-nav" id="sidebar-nav">
+            <div class="sidebar-logo">Hệ thống phân loại cà chua</div>
+            <ul class="sidebar-menu">
+                <li><a href="/" id="nav-home"><span class="nav-icon">📊</span> Giám sát</a></li>
+                <li><a href="/history.html" class="active" id="nav-history"><span class="nav-icon">🕐</span> Lịch sử</a></li>
+                <li id="nav-admin-item" class="hidden"><a href="/admin.html" id="nav-admin"><span class="nav-icon">👥</span> Quản lý người dùng</a></li>
+            </ul>
+            <div class="sidebar-actions" id="sidebar-actions">
+                <button id="btn-new-batch" class="btn-new-batch">+ Tạo mới</button>
+                <button class="sidebar-link" onclick="alert('Tính năng trợ giúp đang phát triển!')">
+                    <span>ℹ️</span> Trợ giúp
+                </button>
+                <button class="sidebar-link logout" id="btn-logout">
+                    <span>↪️</span> Đăng xuất
+                </button>
             </div>
-            <div>
-                <button id="btn-export" class="btn btn-primary" style="margin: 0; width: auto; padding: 8px 15px;">Export to Excel</button>
-            </div>
-        </div>
-        <div class="history-table-container" style="overflow-x: auto;">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Image</th>
-                        <th>Status</th>
-                        <th>Label</th>
-                        <th>Created At</th>
-                        <th>Classified At</th>
-                        <th>Sorted At</th>
-                        <th>Confidence</th>
-                    </tr>
-                </thead>
-                <tbody id="history-body">
-                </tbody>
-            </table>
-        </div>
-    </main>
+        </nav>
 
+        <!-- Main Area -->
+        <div class="main-area">
+            <!-- Top Bar -->
+            <div class="top-bar">
+                <button class="theme-toggle-btn" title="Chuyển đổi giao diện">
+                    <span class="theme-icon-sun">☀️</span>
+                    <span class="theme-icon-moon">🌙</span>
+                </button>
+                <div class="user-info" id="user-info">
+                    <span id="user-display-name">Người dùng</span>
+                    <div class="user-avatar" id="user-avatar">👤</div>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="main-content">
+                <div class="page-content">
+                    <h1 class="page-title">Lịch Sử Phân Loại Cà Chua Chi Tiết</h1>
+
+                    <div class="filter-bar">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <label for="batch-select">Lọc theo lô</label>
+                            <select id="batch-select">
+                                <option value="all">Tất cả</option>
+                            </select>
+                        </div>
+                        <div>
+                            <button id="btn-export" class="btn btn-outline">
+                                📥 Xuất báo cáo Excel
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="table-container">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Hình ảnh</th>
+                                    <th>Phân loại</th>
+                                    <th>Thời gian chụp</th>
+                                    <th>Thời gian phân tích</th>
+                                    <th>Thời gian đã phân loại</th>
+                                    <th>Độ chính xác</th>
+                                </tr>
+                            </thead>
+                            <tbody id="history-body">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/utils/theme.js"></script>
     <script src="js/utils/constants.js"></script>
     <script src="js/utils/helpers.js"></script>
     <script src="js/api.js"></script>

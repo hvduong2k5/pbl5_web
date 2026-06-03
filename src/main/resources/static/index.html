@@ -1,31 +1,71 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home - Tomato Detection System</title>
+    <title>Giám sát - Hệ Thống Phân Loại Cà Chua</title>
+    <meta name="description" content="Dashboard giám sát quy trình phân loại cà chua tự động">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/layout.css">
     <link rel="stylesheet" href="css/components.css">
 </head>
 <body>
-    <div id="header-container"></div>
-    <main class="main-layout">
-        <div class="queues-container">
-            <div id="queue-detected" class="queue"></div>
-            <div id="queue-transfer" class="queue"></div>
-            <div id="queue-sorted" class="queue"></div>
-        </div>
-        <aside class="sidebar">
-            <div id="stats-container" class="stats-panel"></div>
-            <div id="control-container" class="control-panel">
-                <h3>System Panel</h3>
-                <div id="system-status" style="margin-bottom: 15px; font-weight: bold; color: var(--secondary-color);">Status: Waiting for ESP...</div>
-                <button id="btn-new-batch" class="btn btn-secondary">New Batch</button>
+    <div class="app-wrapper">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar-nav" id="sidebar-nav">
+            <div class="sidebar-logo">Hệ thống phân loại cà chua</div>
+            <ul class="sidebar-menu">
+                <li><a href="/" class="active" id="nav-home"><span class="nav-icon">📊</span> Giám sát</a></li>
+                <li><a href="/history.html" id="nav-history"><span class="nav-icon">🕐</span> Lịch sử</a></li>
+                <li id="nav-admin-item" class="hidden"><a href="/admin.html" id="nav-admin"><span class="nav-icon">👥</span> Quản lý người dùng</a></li>
+            </ul>
+            <div class="sidebar-actions" id="sidebar-actions">
+                <button id="btn-new-batch" class="btn-new-batch">+ Tạo mới</button>
+                <button class="sidebar-link" onclick="alert('Tính năng trợ giúp đang phát triển!')">
+                    <span>ℹ️</span> Trợ giúp
+                </button>
+                <button class="sidebar-link logout" id="btn-logout">
+                    <span>↪️</span> Đăng xuất
+                </button>
             </div>
-        </aside>
-    </main>
+        </nav>
 
+        <!-- Main Area -->
+        <div class="main-area">
+            <!-- Top Bar -->
+            <div class="top-bar">
+                <button class="theme-toggle-btn" title="Chuyển đổi giao diện">
+                    <span class="theme-icon-sun">☀️</span>
+                    <span class="theme-icon-moon">🌙</span>
+                </button>
+                <div class="user-info" id="user-info">
+                    <span id="user-display-name">Người dùng</span>
+                    <div class="user-avatar" id="user-avatar">👤</div>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="main-content">
+                <div class="dashboard-layout">
+                    <!-- Queues -->
+                    <div class="dashboard-queues">
+                        <div id="queue-detected" class="queue"></div>
+                        <div id="queue-transfer" class="queue"></div>
+                        <div id="queue-sorted" class="queue"></div>
+                    </div>
+
+                    <!-- Right Sidebar -->
+                    <div class="dashboard-right">
+                        <div id="stats-container" class="panel"></div>
+                        <div id="system-status-panel" class="panel"></div>
+                        <div id="batch-info-panel" class="panel"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/utils/theme.js"></script>
     <script src="js/utils/constants.js"></script>
     <script src="js/utils/helpers.js"></script>
     <script src="js/state/store.js"></script>

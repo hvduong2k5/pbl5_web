@@ -1,24 +1,140 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* ========== LIGHT THEME (Default) ========== */
 :root {
-    --primary-color: #4CAF50;
-    --danger-color: #f44336;
-    --secondary-color: #2196F3;
-    --bg-color: #f5f5f5;
-    --text-color: #333;
-    --border-color: #ddd;
-    --card-bg: #fff;
+    --primary-color: #1a3a5c;
+    --primary-light: #2d5a8e;
+    --accent-color: #3b82f6;
+    --danger-color: #ef4444;
+    --success-color: #22c55e;
+    --warning-color: #f59e0b;
+    --secondary-color: #6366f1;
+
+    --bg-color: #f0f2f5;
+    --bg-secondary: #e8eaed;
+    --text-color: #1a1a2e;
+    --text-secondary: #6b7280;
+    --text-muted: #9ca3af;
+    --border-color: #e5e7eb;
+    --card-bg: #ffffff;
+    --card-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+    --card-shadow-hover: 0 4px 12px rgba(0,0,0,0.1);
+
+    --sidebar-bg: #ffffff;
+    --sidebar-border: #e5e7eb;
+    --sidebar-active-bg: #eef2ff;
+    --sidebar-active-color: #3b82f6;
+
+    --topbar-bg: #ffffff;
+    --topbar-border: #e5e7eb;
+
+    --input-bg: #ffffff;
+    --input-border: #d1d5db;
+    --input-focus-border: #3b82f6;
+    --input-focus-ring: rgba(59,130,246,0.2);
+
+    --table-header-bg: #f8fafc;
+    --table-row-hover: #f1f5f9;
+    --table-border: #e5e7eb;
+
+    --modal-overlay: rgba(0,0,0,0.4);
+
+    --badge-ripe: #e91e63;
+    --badge-unripe: #f59e0b;
+    --badge-reject: #ef4444;
+    --badge-detected: #ff9800;
+    --badge-classified: #3b82f6;
+    --badge-sorted: #22c55e;
+    --badge-transferred: #8b5cf6;
+    --badge-active: #22c55e;
+    --badge-disabled: #ef4444;
+
+    --system-running: #22c55e;
+    --system-stopped: #ef4444;
+
+    --scrollbar-track: #f1f1f1;
+    --scrollbar-thumb: #c1c1c1;
+}
+
+/* ========== DARK THEME ========== */
+[data-theme="dark"] {
+    --bg-color: #0f172a;
+    --bg-secondary: #1e293b;
+    --text-color: #e2e8f0;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+    --border-color: #334155;
+    --card-bg: #1e293b;
+    --card-shadow: 0 1px 3px rgba(0,0,0,0.3), 0 1px 2px rgba(0,0,0,0.2);
+    --card-shadow-hover: 0 4px 12px rgba(0,0,0,0.4);
+
+    --sidebar-bg: #1e293b;
+    --sidebar-border: #334155;
+    --sidebar-active-bg: #1e3a5f;
+    --sidebar-active-color: #60a5fa;
+
+    --topbar-bg: #1e293b;
+    --topbar-border: #334155;
+
+    --input-bg: #334155;
+    --input-border: #475569;
+    --input-focus-border: #60a5fa;
+    --input-focus-ring: rgba(96,165,250,0.3);
+
+    --table-header-bg: #1e293b;
+    --table-row-hover: #334155;
+    --table-border: #334155;
+
+    --modal-overlay: rgba(0,0,0,0.7);
+
+    --scrollbar-track: #1e293b;
+    --scrollbar-thumb: #475569;
+}
+
+/* ========== BASE RESET ========== */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
 body {
-    margin: 0;
-    font-family: Arial, sans-serif;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     background-color: var(--bg-color);
     color: var(--text-color);
-}
-
-* {
-    box-sizing: border-box;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 h1, h2, h3, h4, h5, h6 {
     margin-top: 0;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+img {
+    max-width: 100%;
+    display: block;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--scrollbar-track); }
+::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+/* Utility */
+.hidden { display: none !important; }
+
+/* Transitions for theme switching */
+.sidebar-nav, .top-bar, .card, .stats-panel, .control-panel,
+.queue, .table, .modal-content, .login-card, .form-control,
+.btn, input, select {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }

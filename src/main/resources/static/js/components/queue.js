@@ -1,40 +1,41 @@
-function renderQueue(queueId, title, fruits, eventType) {
+function renderQueue(queueId, title, fruits, eventType, icon) {
     const queueEl = document.getElementById(queueId);
     if (!queueEl) return;
     
-    // Setup header once
-    if (!queueEl.querySelector('.queue-header')) {
-        queueEl.innerHTML = `
-            <div class="queue-header">${title}</div>
-            <div class="queue-body" id="${queueId}-body"></div>
-        `;
-    }
-    
-    const bodyEl = document.getElementById(`${queueId}-body`);
-    bodyEl.innerHTML = '';
-    
-    // Filter fruits for this queue based on lastEvent or status
+    // Filter fruits for this queue
     const queueFruits = Object.values(fruits).filter(f => {
-        // Handle realtime websocket events
         if (f.lastEvent) {
-            console.log(`[DEBUG] Fruit ID ${f.id} có WebSocket lastEvent là "${f.lastEvent}". Đang so sánh với queue type "${eventType}"...`);
             if (eventType === 'detected') return f.lastEvent === 'detected' || f.lastEvent === 'classified';
             if (eventType === 'transfer') return f.lastEvent === 'transfer';
             if (eventType === 'sorted') return f.lastEvent === 'sorted';
             return false;
         }
-        
-        // Handle fallback based on DB status on page load
-        console.log(`[DEBUG] Fruit ID ${f.id} tải từ DB có status là "${f.status}". Đang so sánh với queue type "${eventType}"...`);
         if (eventType === 'detected') return f.status === 'DETECTED' || f.status === 'CLASSIFIED';
         if (eventType === 'transfer') return f.status === 'TRANSFERRED';
         if (eventType === 'sorted') return f.status === 'SORTED';
         return false;
     });
 
-    console.log(`[DEBUG] Đưa ${queueFruits.length} quả vào ${title} (Queue: ${eventType}).`);
+    // Setup header once
+    if (!queueEl.querySelector('.queue-header')) {
+        queueEl.innerHTML = `
+            <div class="queue-header">
+                <span class="queue-icon">${icon || '📋'}</span>
+                <span>${title}</span>
+                <span class="queue-count" id="${queueId}-count">${queueFruits.length}</span>
+            </div>
+            <div class="queue-body" id="${queueId}-body"></div>
+        `;
+    } else {
+        // Update count
+        const countEl = document.getElementById(`${queueId}-count`);
+        if (countEl) countEl.textContent = queueFruits.length;
+    }
+    
+    const bodyEl = document.getElementById(`${queueId}-body`);
+    bodyEl.innerHTML = '';
 
     queueFruits.forEach(f => {
-        bodyEl.appendChild(createFruitCard(f));
+        bodyEl.appendChild(createFruitCard(f, eventType));
     });
 }
