@@ -19,6 +19,20 @@ function initSidebar() {
             const avatarEl = document.getElementById('user-avatar');
             if (avatarEl) avatarEl.textContent = username.charAt(0).toUpperCase();
 
+            // Show new batch button if has MANAGE_BATCH
+            if (hasAuthority('MANAGE_BATCH') || hasAuthority('ROLE_ADMIN')) {
+                const newBatchBtn = document.getElementById('btn-new-batch');
+                if (newBatchBtn) newBatchBtn.classList.remove('hidden');
+                
+                const fabNewBatch = document.getElementById('fab-new-batch');
+                if (fabNewBatch) {
+                    fabNewBatch.classList.remove('hidden');
+                    fabNewBatch.addEventListener('click', () => {
+                        if (newBatchBtn) newBatchBtn.click();
+                    });
+                }
+            }
+
             // Show admin nav if has ROLE_ADMIN
             if (hasAuthority('ROLE_ADMIN')) {
                 const adminItem = document.getElementById('nav-admin-item');
@@ -41,11 +55,38 @@ function initSidebar() {
         console.error('Không thể giải mã token', e);
     }
 
-    // Logout button
-    const logoutBtn = document.getElementById('btn-logout');
-    if (logoutBtn) {
-        logoutBtn.addEventListener('click', () => {
-            localStorage.removeItem('accessToken');
+    // Topbar User Avatar Dropdown
+    const userDropdownWrapper = document.getElementById('user-info');
+    if (userDropdownWrapper) {
+        userDropdownWrapper.addEventListener('click', (e) => {
+            if (e.target.closest('#topbar-btn-logout')) return; // handled separately
+            userDropdownWrapper.classList.toggle('active');
+        });
+        
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!userDropdownWrapper.contains(e.target)) {
+                userDropdownWrapper.classList.remove('active');
+            }
+        });
+    }
+
+    // Logout
+    const btnLogout = document.getElementById('btn-logout');
+    if (btnLogout) {
+        btnLogout.addEventListener('click', () => {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = '/login.html';
+        });
+    }
+    
+    // Topbar Logout
+    const topbarBtnLogout = document.getElementById('topbar-btn-logout');
+    if (topbarBtnLogout) {
+        topbarBtnLogout.addEventListener('click', () => {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
             window.location.href = '/login.html';
         });
     }

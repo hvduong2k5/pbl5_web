@@ -64,6 +64,27 @@ async function initHistoryPage() {
                     <td style="font-weight:600;">${confidenceHtml}</td>
                 `;
                 historyBody.appendChild(tr);
+
+                if (mobileContainer) {
+                    const cardHtml = `
+                        <div class="mobile-list-card">
+                            <div class="card-img-col">
+                                ${f.imageUrl ? `<img src="${f.imageUrl}" alt="${f.id}">` : 'N/A'}
+                            </div>
+                            <div class="card-content-col">
+                                <div class="card-title-row">
+                                    <span class="card-id">ID: ${f.id}</span>
+                                    <span class="card-time">${f.createdAt ? formatDate(f.createdAt) : ''}</span>
+                                </div>
+                                <div class="card-details-row">
+                                    ${f.label ? `<span class="badge ${badgeClass}">${labelVi}</span>` : ''}
+                                    <span class="card-detail-text">Độ tin cậy: ${confidenceHtml}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    mobileContainer.insertAdjacentHTML('beforeend', cardHtml);
+                }
             });
         } catch (e) {
             console.error('[ERROR History] Lỗi khi render bảng History:', e);

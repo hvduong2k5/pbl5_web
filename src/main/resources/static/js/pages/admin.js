@@ -82,6 +82,9 @@ async function loadUsers() {
         const tbody = document.getElementById('user-body');
         tbody.innerHTML = '';
         
+        const mobileContainer = document.getElementById('mobile-users-cards');
+        if (mobileContainer) mobileContainer.innerHTML = '';
+        
         userTotalPages = response.totalPages || 1;
         document.getElementById('user-page-info').textContent = `Trang ${userCurrentPage + 1} / ${userTotalPages}`;
         
@@ -90,6 +93,7 @@ async function loadUsers() {
 
         if (!response.content || response.content.length === 0) {
             tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding: 20px; color: var(--text-muted);">Không tìm thấy người dùng</td></tr>`;
+            if (mobileContainer) mobileContainer.innerHTML = `<div style="text-align:center; padding: 20px; color: var(--text-muted);">Không tìm thấy người dùng</div>`;
             return;
         }
 
@@ -126,6 +130,31 @@ async function loadUsers() {
                 </td>
             `;
             tbody.appendChild(tr);
+
+            if (mobileContainer) {
+                const cardHtml = `
+                    <div class="mobile-list-card col-layout">
+                        <div class="card-title-row" style="margin-bottom: 12px;">
+                            <div class="user-cell">
+                                <div class="user-avatar-circle">${user.username.substring(0, 2).toUpperCase()}</div>
+                                <div>
+                                    <div class="user-name-text">${user.username}</div>
+                                    <div style="font-size:0.85em; color:var(--text-muted);">${user.email || 'No email'}</div>
+                                </div>
+                            </div>
+                            <div class="action-btns">
+                                <button class="btn btn-outline btn-icon" onclick='openEditUserModal(${JSON.stringify(user).replace(/'/g, "&apos;")})'>✏️</button>
+                                <button class="btn btn-danger btn-icon" onclick="deleteUser(${user.id})">🗑️</button>
+                            </div>
+                        </div>
+                        <div class="card-details-row" style="justify-content: space-between; align-items:center;">
+                            <div style="display:flex; gap:4px; flex-wrap:wrap;">${rolesHtml}</div>
+                            ${statusHtml}
+                        </div>
+                    </div>
+                `;
+                mobileContainer.insertAdjacentHTML('beforeend', cardHtml);
+            }
         });
     } catch (e) {
         console.error('Lỗi khi load users:', e);

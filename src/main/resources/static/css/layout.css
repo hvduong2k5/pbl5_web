@@ -125,13 +125,82 @@
     border-bottom: 1px solid var(--topbar-border);
     display: flex;
     align-items: center;
-    justify-content: flex-end;
+    justify-content: space-between;
     padding: 0 24px;
-    gap: 16px;
     position: sticky;
     top: 0;
     z-index: 50;
 }
+
+.top-bar-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-left: auto;
+}
+
+.icon-btn {
+    background: none;
+    border: none;
+    color: var(--text-color);
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-radius: 50%;
+    transition: background-color 0.2s;
+}
+.icon-btn:hover {
+    background-color: var(--bg-secondary);
+}
+.icon-btn svg { width: 20px; height: 20px; }
+
+.mobile-only { display: none; }
+.desktop-only { display: flex; }
+
+.dropdown-wrapper {
+    position: relative;
+    cursor: pointer;
+}
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 8px;
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    box-shadow: var(--card-shadow);
+    padding: 8px 0;
+    min-width: 150px;
+    display: none;
+    flex-direction: column;
+    z-index: 100;
+}
+.dropdown-wrapper.active .dropdown-menu {
+    display: flex;
+}
+.dropdown-item {
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: none;
+    border: none;
+    color: var(--danger-color);
+    width: 100%;
+    text-align: left;
+    font-size: 0.9em;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: inherit;
+}
+.dropdown-item:hover {
+    background-color: var(--bg-secondary);
+}
+.dropdown-item svg { width: 16px; height: 16px; }
 
 .theme-toggle-btn {
     display: flex;
@@ -353,12 +422,14 @@
     }
 
     .dashboard-layout {
+        display: flex;
         flex-direction: column;
         height: auto;
     }
     
     .dashboard-right {
         max-width: 100%;
+        order: -1;
     }
     
     .top-bar {
@@ -387,4 +458,25 @@
     .login-body {
         padding: 20px;
     }
+    
+    .mobile-only { display: flex !important; }
+    .desktop-only { display: none !important; }
+    .top-bar { padding: 0 16px; }
+    
+    .mobile-logo {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 700;
+        font-size: 1.25em;
+        color: var(--text-color);
+    }
+    .logo-icon-wrap {
+        width: 32px; height: 32px;
+        background-color: var(--primary-color);
+        color: white;
+        border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+    }
+    .logo-icon-wrap svg { width: 20px; height: 20px; }
 }

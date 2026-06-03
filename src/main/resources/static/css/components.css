@@ -788,3 +788,192 @@
     font-size: 1.05em;
     color: var(--text-color);
 }
+
+/* ========== DASHBOARD MOBILE SPECIFIC ========== */
+@media (max-width: 768px) {
+    #system-status-panel, #batch-info-panel { display: none; }
+    
+    #stats-container {
+        border: none;
+        box-shadow: none;
+        background: transparent;
+        padding: 0;
+    }
+    #stats-container .panel-title { display: none; }
+    #stats-container .panel-body { padding: 0; }
+    
+    .stats-list {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+    
+    .stats-list li {
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 16px;
+        flex-direction: column;
+        align-items: flex-start;
+        border-left: 1px solid var(--border-color) !important;
+        border-top: 3px solid transparent;
+        box-shadow: var(--card-shadow);
+        gap: 8px;
+    }
+    
+    .stats-list li.stat-wait { display: none; }
+    .stats-list li.stat-total { border-top-color: var(--accent-color); }
+    .stats-list li.stat-ripe { border-top-color: var(--badge-ripe); }
+    .stats-list li.stat-unripe { border-top-color: var(--badge-unripe); }
+    .stats-list li.stat-reject { border-top-color: var(--badge-reject); }
+    
+    .stats-list li .stats-label { font-size: 0.95em; }
+    .stats-list li .stats-value { font-size: 1.8em; }
+    
+    .queue.mobile-full {
+        border: none;
+        box-shadow: none;
+        background: transparent;
+        padding: 0;
+        min-width: unset;
+    }
+    .queue.mobile-full .queue-header {
+        background: transparent;
+        border-bottom: none;
+        padding: 16px 0 8px;
+        font-size: 1.25em;
+        font-weight: 700;
+        justify-content: flex-start;
+        position: relative;
+        color: var(--text-color);
+    }
+    .queue.mobile-full .queue-header::after {
+        content: '● Trực tuyến';
+        position: absolute;
+        right: 0;
+        color: var(--badge-ripe);
+        font-size: 0.7em;
+        font-weight: 600;
+    }
+    .queue.mobile-full .queue-header .queue-count { display: none; }
+    .queue.mobile-full .queue-icon { display: none; }
+    .queue.mobile-full .queue-body {
+        padding: 0;
+        background: transparent;
+        overflow: visible;
+    }
+    
+    .queue.mobile-full .fruit-card {
+        display: flex;
+        flex-direction: row;
+        padding: 12px;
+        gap: 16px;
+        align-items: center;
+        margin-bottom: 12px;
+    }
+    .queue.mobile-full .fruit-card-img-wrapper {
+        width: 80px;
+        height: 80px;
+        flex-shrink: 0;
+        border-radius: 8px;
+    }
+    .queue.mobile-full .fruit-card-id-overlay { display: none; }
+    .queue.mobile-full .fruit-card-body {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        padding: 0;
+    }
+    .queue.mobile-full .fruit-card-row:first-child {
+        justify-content: space-between;
+        color: var(--text-color);
+        font-weight: 600;
+    }
+    .queue.mobile-full .fruit-card-row:first-child .dot { display: none; }
+    .queue.mobile-full .fruit-card-row:first-child span {
+        color: var(--text-muted);
+        font-weight: 400;
+        font-size: 0.85em;
+    }
+    .queue.mobile-full .fruit-card-row b { display: none; }
+    
+    /* Mobile Cards */
+    .mobile-list-card {
+        background-color: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        padding: 16px;
+        margin-bottom: 12px;
+        box-shadow: var(--card-shadow);
+        display: flex;
+        gap: 12px;
+    }
+    .mobile-list-card.col-layout {
+        flex-direction: column;
+    }
+    .mobile-list-card .card-img-col {
+        width: 80px;
+        height: 80px;
+        flex-shrink: 0;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+    .mobile-list-card .card-img-col img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    .mobile-list-card .card-content-col {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 8px;
+    }
+    .mobile-list-card .card-title-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        width: 100%;
+    }
+    .mobile-list-card .card-id {
+        font-weight: 600;
+        color: var(--text-color);
+    }
+    .mobile-list-card .card-time {
+        font-size: 0.85em;
+        color: var(--text-muted);
+    }
+    .mobile-list-card .card-details-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+        width: 100%;
+    }
+    .mobile-list-card .card-detail-text {
+        font-size: 0.85em;
+        color: var(--text-secondary);
+    }
+
+    /* FAB Button */
+    .fab-btn {
+        position: fixed;
+        bottom: 76px;
+        right: 16px;
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        border-radius: 24px;
+        padding: 12px 20px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        font-weight: 600;
+        font-size: 0.95em;
+        z-index: 900;
+        cursor: pointer;
+    }
+}
