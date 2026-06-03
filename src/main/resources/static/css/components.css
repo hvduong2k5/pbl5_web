@@ -650,6 +650,12 @@
     margin: 0;
 }
 
+.header-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
 @media (max-width: 768px) {
     .section-card-header {
         flex-direction: column;
@@ -659,6 +665,18 @@
     .section-card-header .btn {
         width: 100%;
         padding: 12px;
+    }
+    .header-actions {
+        flex-direction: column;
+        align-items: stretch;
+        width: 100%;
+    }
+    .header-actions .search-bar {
+        width: 100%;
+    }
+    .header-actions .search-bar input {
+        flex: 1;
+        width: 100%;
     }
 }
 
