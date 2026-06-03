@@ -166,6 +166,9 @@ async function loadRoles() {
         const tbody = document.getElementById('role-body');
         tbody.innerHTML = '';
 
+        const mobileContainer = document.getElementById('mobile-roles-cards');
+        if (mobileContainer) mobileContainer.innerHTML = '';
+
         roleTotalPages = response.totalPages || 1;
         document.getElementById('role-page-info').textContent = `Trang ${roleCurrentPage + 1} / ${roleTotalPages}`;
         
@@ -174,6 +177,7 @@ async function loadRoles() {
 
         if (!response.content || response.content.length === 0) {
             tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding: 20px; color: var(--text-muted);">Chưa có vai trò nào</td></tr>`;
+            if (mobileContainer) mobileContainer.innerHTML = `<div style="text-align:center; padding: 20px; color: var(--text-muted);">Chưa có vai trò nào</div>`;
             return;
         }
 
@@ -196,6 +200,24 @@ async function loadRoles() {
                 </td>
             `;
             tbody.appendChild(tr);
+
+            if (mobileContainer) {
+                const cardHtml = `
+                    <div class="list-card">
+                        <div class="card-title-row" style="margin-bottom: 12px; display:flex; justify-content: space-between; align-items:center;">
+                            <div class="user-name-text" style="font-size: 1.1em; color: var(--primary-color);">${role.name}</div>
+                            <div class="action-btns">
+                                <button class="btn btn-outline btn-icon" onclick='openEditRoleModal(${JSON.stringify(role).replace(/'/g, "&apos;")})'>✏️</button>
+                                <button class="btn btn-danger btn-icon" onclick="deleteRole(${role.id})">🗑️</button>
+                            </div>
+                        </div>
+                        <div class="card-details-row" style="margin-top: 4px; display:flex; flex-wrap:wrap; gap:4px;">
+                            ${permsHtml}
+                        </div>
+                    </div>
+                `;
+                mobileContainer.insertAdjacentHTML('beforeend', cardHtml);
+            }
         });
     } catch (e) {
         console.error('Lỗi khi load roles:', e);
