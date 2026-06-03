@@ -16,4 +16,5 @@ public class FruitEventDTO {
     private String type;
     private String image_url;
     private Double confidence;
+    private String timestamp;
 }

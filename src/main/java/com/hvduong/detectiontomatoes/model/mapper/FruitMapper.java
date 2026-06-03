@@ -22,9 +22,36 @@ public class FruitMapper {
 
     public FruitEventDTO toEventDTO(Fruit fruit, String event) {
         String imageUrl = fruit.getImageUrl();
-        if (imageUrl != null) {
-            imageUrl = minioUrl + "/" + imageUrl;
+        if (imageUrl != null && !imageUrl.isEmpty()) {
+            if (!imageUrl.startsWith("http://") && !imageUrl.startsWith("https://")) {
+                String baseUrl = minioUrl;
+                if (baseUrl != null) {
+                    if (baseUrl.endsWith("/")) {
+                        baseUrl = baseUrl.substring(0, baseUrl.length() - 1);
+                    }
+                    if (imageUrl.startsWith("/")) {
+                        imageUrl = baseUrl + imageUrl;
+                    } else {
+                        imageUrl = baseUrl + "/" + imageUrl;
+                    }
+                }
+            }
         }
+        java.time.LocalDateTime ldt = null;
+        if ("detected".equals(event)) {
+            ldt = fruit.getCreatedAt();
+        } else if ("classified".equals(event)) {
+            ldt = fruit.getClassifiedAt();
+        } else if ("sorted".equals(event)) {
+            ldt = fruit.getSortedAt();
+        } else {
+            ldt = fruit.getUpdatedAt();
+        }
+        if (ldt == null) {
+            ldt = java.time.LocalDateTime.now();
+        }
+        String timestampStr = ldt.format(java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+
         return FruitEventDTO.builder()
                 .event(event)
                 .id(fruit.getId())
@@ -32,6 +59,7 @@ public class FruitMapper {
                 .type(fruit.getSortedType())
                 .image_url(imageUrl)
                 .confidence(fruit.getConfidence())
+                .timestamp(timestampStr)
                 .build();
     }
 

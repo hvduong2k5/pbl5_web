@@ -25,6 +25,7 @@ public class FruitController {
     }
 
     @GetMapping("/all")
+    @org.springframework.security.access.prepost.PreAuthorize("hasAuthority('VIEW_HISTORY')")
     public ResponseEntity<List<Map<String, Object>>> getAllFruits() {
         return ResponseEntity.ok(fruitService.getAllFruits());
     }

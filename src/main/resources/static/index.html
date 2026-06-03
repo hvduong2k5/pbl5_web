@@ -1,31 +1,123 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home - Tomato Detection System</title>
+    <title>Giám sát - Hệ Thống Phân Loại Cà Chua</title>
+    <meta name="description" content="Dashboard giám sát quy trình phân loại cà chua tự động">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/layout.css">
     <link rel="stylesheet" href="css/components.css">
 </head>
-<body>
-    <div id="header-container"></div>
-    <main class="main-layout">
-        <div class="queues-container">
-            <div id="queue-detected" class="queue"></div>
-            <div id="queue-transfer" class="queue"></div>
-            <div id="queue-sorted" class="queue"></div>
-        </div>
-        <aside class="sidebar">
-            <div id="stats-container" class="stats-panel"></div>
-            <div id="control-container" class="control-panel">
-                <h3>System Panel</h3>
-                <div id="system-status" style="margin-bottom: 15px; font-weight: bold; color: var(--secondary-color);">Status: Waiting for ESP...</div>
-                <button id="btn-new-batch" class="btn btn-secondary">New Batch</button>
-            </div>
-        </aside>
-    </main>
 
+<body>
+    <div class="app-wrapper">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar-nav" id="sidebar-nav">
+            <div class="sidebar-logo">Hệ thống phân loại cà chua</div>
+            <ul class="sidebar-menu">
+                <li><a href="/" class="active" id="nav-home"><span class="nav-icon">📊</span> Giám sát</a></li>
+                <li id="nav-history-item" class="hidden"><a href="/history.html" id="nav-history"><span class="nav-icon">🕐</span> Lịch sử</a></li>
+                <li id="nav-admin-item" class="hidden"><a href="/admin.html" id="nav-admin"><span
+                            class="nav-icon">👥</span> Quản lý người dùng</a></li>
+            </ul>
+            <div class="sidebar-actions" id="sidebar-actions">
+                <button id="btn-new-batch" class="btn-new-batch hidden">+ Tạo lô mới</button>
+                <a href="/help.html" class="sidebar-link" id="nav-help">
+                    Trợ giúp
+                </a>
+                <button class="sidebar-link logout" id="btn-logout">
+                    Đăng xuất
+                </button>
+            </div>
+        </nav>
+
+        <!-- Main Area -->
+        <div class="main-area">
+            <!-- Top Bar -->
+            <div class="top-bar">
+                <div class="top-bar-left mobile-only">
+                    <div class="mobile-logo">
+                        <div class="logo-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg></div>
+                        <span class="logo-text">TomatoQA</span>
+                    </div>
+                </div>
+                
+                <div class="top-bar-right">
+                    <button class="theme-toggle-btn" title="Chuyển đổi giao diện">
+                        <span class="theme-icon-sun">☀️</span>
+                        <span class="theme-icon-moon">🌙</span>
+                    </button>
+                    <button class="icon-btn notification-btn desktop-only" title="Thông báo">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+                    </button>
+                    <div class="user-info dropdown-wrapper" id="user-info">
+                        <span id="user-display-name" class="desktop-only">Người dùng</span>
+                        <div class="user-avatar" id="user-avatar">👤</div>
+                        
+                        <div class="dropdown-menu">
+                            <button class="dropdown-item" id="topbar-btn-logout">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                                Đăng xuất
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="main-content">
+                <div class="dashboard-layout">
+                    <!-- Queues -->
+                    <div class="mobile-queue-tabs mobile-only">
+                        <button class="queue-tab" data-target="queue-detected">Phát hiện</button>
+                        <button class="queue-tab" data-target="queue-transfer">Đang chuyển</button>
+                        <button class="queue-tab active" data-target="queue-sorted">Phân loại</button>
+                    </div>
+                    <div class="dashboard-queues">
+                        <div id="queue-detected" class="queue queue-mobile-hidden"></div>
+                        <div id="queue-transfer" class="queue queue-mobile-hidden"></div>
+                        <div id="queue-sorted" class="queue mobile-full active-mobile-queue"></div>
+                    </div>
+
+                    <!-- Right Sidebar -->
+                    <div class="dashboard-right">
+                        <div id="stats-container" class="panel"></div>
+                        <div id="system-status-panel" class="panel"></div>
+                        <div id="batch-info-panel" class="panel"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Mobile FAB -->
+            <button id="fab-new-batch" class="fab-btn mobile-only hidden">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 20px; height: 20px;"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+                Lô mới
+            </button>
+        </div>
+        <!-- Mobile Bottom Nav -->
+        <nav class="mobile-bottom-nav">
+            <a href="/" class="mobile-nav-item active" id="mobile-nav-home">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                <span>Giám sát</span>
+            </a>
+            <a href="/history.html" class="mobile-nav-item" id="mobile-nav-history" style="display:none;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                <span>Lịch sử</span>
+            </a>
+            <a href="/admin.html" class="mobile-nav-item" id="mobile-nav-system" style="display:none;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>
+                <span>Quản lý</span>
+            </a>
+            <a href="/help.html" class="mobile-nav-item" id="mobile-nav-settings">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                <span>Trợ giúp</span>
+            </a>
+        </nav>
+    </div>
+
+    <script src="js/utils/theme.js"></script>
     <script src="js/utils/constants.js"></script>
     <script src="js/utils/helpers.js"></script>
     <script src="js/state/store.js"></script>
@@ -37,5 +129,27 @@
     <script src="js/components/stats.js"></script>
     <script src="js/pages/current.js"></script>
     <script src="js/app.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const tabs = document.querySelectorAll('.queue-tab');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    
+                    document.querySelectorAll('.dashboard-queues .queue').forEach(q => {
+                        q.classList.remove('active-mobile-queue');
+                        q.classList.remove('mobile-full');
+                        q.classList.add('queue-mobile-hidden');
+                    });
+                    const target = document.getElementById(tab.dataset.target);
+                    target.classList.remove('queue-mobile-hidden');
+                    target.classList.add('active-mobile-queue');
+                    target.classList.add('mobile-full');
+                });
+            });
+        });
+    </script>
 </body>
+
 </html>

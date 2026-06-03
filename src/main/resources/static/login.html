@@ -1,51 +1,66 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Tomato Detection System</title>
+    <title>Đăng Nhập - Hệ Thống Phân Loại Cà Chua</title>
+    <meta name="description" content="Đăng nhập vào hệ thống phân loại cà chua tự động">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/layout.css">
     <link rel="stylesheet" href="css/components.css">
 </head>
+
 <body>
-    <header class="app-header">
-        <div class="nav-links">
-            <span style="font-weight: bold; color: var(--primary-color); font-size: 1.2em;">Tomato Detection System</span>
+    <div class="login-page">
+        <div class="login-topbar">
+            <span class="login-topbar-title">Đăng Nhập Hệ Thống Phân Loại Cà Chua</span>
+            <button class="theme-toggle-btn" title="Chuyển đổi giao diện">
+                <span class="theme-icon-sun">☀️</span>
+                <span class="theme-icon-moon">🌙</span>
+            </button>
         </div>
-    </header>
 
-    <main class="login-container">
-        <div class="login-card">
-            <div class="login-header">
-                <h2>Welcome Back</h2>
-                <p>Industrial Quality Assurance Portal</p>
+        <div class="login-body">
+            <div class="login-card">
+                <h2>Hệ thống phân loại cà chua</h2>
+                <p>Đăng nhập để tiếp tục</p>
+
+                <form id="login-form">
+                    <div id="error-message" class="error-alert hidden">
+                        Tên đăng nhập hoặc mật khẩu không chính xác.
+                    </div>
+
+                    <div class="form-group">
+                        <label for="username">Tên đăng nhập</label>
+                        <input type="text" id="username" name="username" class="form-control"
+                            placeholder="Nhập tên đăng nhập" required autocomplete="username" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">Mật khẩu</label>
+                        <input type="password" id="password" name="password" class="form-control" placeholder="••••••••"
+                            required autocomplete="current-password" />
+                    </div>
+
+                    <button id="btn-submit" type="submit" class="btn btn-primary"
+                        style="width: 100%; margin-top: 8px; padding: 12px;">
+                        <span id="btn-text">Đăng nhập</span>
+                    </button>
+                </form>
+
+                <div class="login-footer">
+                    © 2024 Hệ thống phân loại cà chua - All rights reserved.<br>
+                    Phiên bản 1.1.0
+                </div>
             </div>
-
-            <form id="login-form">
-                <div id="error-message" class="error-alert hidden">
-                    Tên đăng nhập hoặc mật khẩu không chính xác.
-                </div>
-
-                <div class="form-group">
-                    <label for="username">Username</label>
-                    <input type="text" id="username" name="username" class="form-control" placeholder="Nhập tên đăng nhập" required autocomplete="username" />
-                </div>
-
-                <div class="form-group">
-                    <label for="password">Password</label>
-                    <input type="password" id="password" name="password" class="form-control" placeholder="••••••••" required autocomplete="current-password" />
-                </div>
-
-                <button id="btn-submit" type="submit" class="btn btn-primary" style="margin-top: 15px;">
-                    <span id="btn-text">Sign In</span>
-                </button>
-            </form>
         </div>
-    </main>
+    </div>
 
+    <script src="js/utils/theme.js"></script>
     <script src="js/utils/constants.js"></script>
     <script src="js/api.js"></script>
     <script src="js/pages/login.js"></script>
 </body>
+
 </html>

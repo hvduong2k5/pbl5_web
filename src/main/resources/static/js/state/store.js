@@ -3,9 +3,9 @@ const Store = {
         currentBatch: null,
         fruits: {}, // id -> fruit data
         stats: {
-            ripe: 0, unripe: 0, rotten: 0, total: 0, wait: 0
+            ripe: 0, unripe: 0, reject: 0, total: 0, wait: 0
         },
-        systemStatus: null
+        systemStatus: localStorage.getItem('systemStatus') || null
     },
     listeners: [],
     subscribe(listener) {
@@ -27,16 +27,21 @@ const Store = {
     },
     updateSystemStatus(status) {
         this.state.systemStatus = status;
+        if (status) {
+            localStorage.setItem('systemStatus', status);
+        } else {
+            localStorage.removeItem('systemStatus');
+        }
         this.notify();
     },
     updateFruit(fruitEvent) {
         const id = fruitEvent.id;
         if (!this.state.fruits[id]) {
-            this.state.fruits[id] = { 
-                id: id, 
-                status: fruitEvent.event === 'detected' ? 'DETECTED' : (fruitEvent.event === 'classified' ? 'CLASSIFIED' : (fruitEvent.event === 'transfer' ? 'TRANSFERRED' : 'SORTED')), 
-                label: fruitEvent.label, 
-                sortedType: fruitEvent.type, 
+            this.state.fruits[id] = {
+                id: id,
+                status: fruitEvent.event === 'detected' ? 'DETECTED' : (fruitEvent.event === 'classified' ? 'CLASSIFIED' : (fruitEvent.event === 'transfer' ? 'TRANSFERRED' : 'SORTED')),
+                label: fruitEvent.label,
+                sortedType: fruitEvent.type,
                 createdAt: fruitEvent.timestamp,
                 imageUrl: fruitEvent.image_url,
                 confidence: fruitEvent.confidence
@@ -47,12 +52,22 @@ const Store = {
             if (fruitEvent.type) this.state.fruits[id].sortedType = fruitEvent.type;
             if (fruitEvent.image_url) this.state.fruits[id].imageUrl = fruitEvent.image_url;
             if (fruitEvent.confidence !== undefined) this.state.fruits[id].confidence = fruitEvent.confidence;
-            
+
             // Map event to status to maintain consistency
-            if (fruitEvent.event === 'detected') this.state.fruits[id].status = 'DETECTED';
-            if (fruitEvent.event === 'classified') this.state.fruits[id].status = 'CLASSIFIED';
-            if (fruitEvent.event === 'transfer') this.state.fruits[id].status = 'TRANSFERRED';
-            if (fruitEvent.event === 'sorted') this.state.fruits[id].status = 'SORTED';
+            if (fruitEvent.event === 'detected') {
+                this.state.fruits[id].status = 'DETECTED';
+            }
+            if (fruitEvent.event === 'classified') {
+                this.state.fruits[id].status = 'CLASSIFIED';
+                if (fruitEvent.timestamp) this.state.fruits[id].classifiedAt = fruitEvent.timestamp;
+            }
+            if (fruitEvent.event === 'transfer') {
+                this.state.fruits[id].status = 'TRANSFERRED';
+            }
+            if (fruitEvent.event === 'sorted') {
+                this.state.fruits[id].status = 'SORTED';
+                if (fruitEvent.timestamp) this.state.fruits[id].sortedAt = fruitEvent.timestamp;
+            }
         }
         if (fruitEvent.event) {
             this.state.fruits[id].lastEvent = fruitEvent.event;

@@ -4,11 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lịch sử - Hệ Thống Phân Loại Cà Chua</title>
-    <meta name="description" content="Lịch sử phân loại cà chua chi tiết">
+    <title>Hướng Dẫn Sử Dụng - Hệ Thống Phân Loại Cà Chua</title>
+    <meta name="description" content="Hướng dẫn sử dụng hệ thống phân loại">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/layout.css">
     <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/help.css">
 </head>
 
 <body>
@@ -18,13 +19,12 @@
             <div class="sidebar-logo">Hệ thống phân loại cà chua</div>
             <ul class="sidebar-menu">
                 <li><a href="/" id="nav-home"><span class="nav-icon">📊</span> Giám sát</a></li>
-                <li id="nav-history-item" class="hidden"><a href="/history.html" class="active" id="nav-history"><span class="nav-icon">🕐</span> Lịch sử</a>
-                </li>
+                <li id="nav-history-item" class="hidden"><a href="/history.html" id="nav-history"><span class="nav-icon">🕐</span> Lịch sử</a></li>
                 <li id="nav-admin-item" class="hidden"><a href="/admin.html" id="nav-admin"><span
                             class="nav-icon">👥</span> Quản lý người dùng</a></li>
             </ul>
             <div class="sidebar-actions" id="sidebar-actions">
-                <a href="/help.html" class="sidebar-link" id="nav-help">
+                <a href="/help.html" class="sidebar-link active" id="nav-help">
                     Trợ giúp
                 </a>
                 <button class="sidebar-link logout" id="btn-logout">
@@ -69,57 +69,58 @@
             <!-- Main Content -->
             <div class="main-content">
                 <div class="page-content">
-                    <h1 class="page-title">Lịch Sử Phân Loại Cà Chua Chi Tiết</h1>
+                    <h1 class="page-title">Hướng Dẫn Sử Dụng Hệ Thống</h1>
 
-                    <div class="filter-bar">
-                        <div style="display: flex; align-items: center; gap: 12px;">
-                            <label for="batch-select">Lọc theo lô</label>
-                            <select id="batch-select">
-                                <option value="all">Tất cả</option>
-                            </select>
-                        </div>
-                        <div>
-                            <button id="btn-export" class="btn btn-success">
-                                Xuất báo cáo Excel
-                            </button>
-                        </div>
-                    </div>
 
-                    <table class="table desktop-only">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Hình ảnh</th>
-                                <th>Phân loại</th>
-                                <th>Thời gian tạo</th>
-                                <th>Thời gian nhận diện</th>
-                                <th>Thời gian hoàn thành</th>
-                                <th>Độ chính xác</th>
-                            </tr>
-                        </thead>
-                        <tbody id="history-body">
-                            <tr>
-                                <td colspan="7" style="text-align:center; padding: 40px; color: var(--text-muted);">
-                                    Vui lòng chọn lô để xem dữ liệu
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <div id="mobile-history-cards" class="mobile-only list-cards-container">
-                        <div style="text-align:center; padding: 40px; color: var(--text-muted); width: 100%;">
-                            Vui lòng chọn lô để xem dữ liệu
+
+                    <!-- Content Panel -->
+                    <div class="help-content-panel">
+                        <div class="help-content-title">Quy trình phân loại</div>
+
+                        <div class="help-step-list">
+                            <!-- Step 1 -->
+                            <div class="help-step-item">
+                                <div class="help-step-icon">🔌</div>
+                                <div class="help-step-content">
+                                    <h3>Bước 1 - Kiểm tra kết nối</h3>
+                                    <p>Đảm bảo tất cả các thiết bị cảm biến và camera đã được kết nối đúng cách và
+                                        hoạt động ổn định trước khi khởi động hệ thống phân loại.</p>
+                                </div>
+                            </div>
+
+                            <!-- Step 2 -->
+                            <div class="help-step-item">
+                                <div class="help-step-icon">📦</div>
+                                <div class="help-step-content">
+                                    <h3>Bước 2 - Tạo lô mới</h3>
+                                    <p>Nhấp vào nút "Tạo lô mới" trên thanh bên để bắt đầu một lô phân loại mới, nhập
+                                        thông tin cần thiết để hệ thống bắt đầu ghi nhận dữ liệu.</p>
+                                </div>
+                            </div>
+
+                            <!-- Step 3 -->
+                            <div class="help-step-item">
+                                <div class="help-step-icon">💻</div>
+                                <div class="help-step-content">
+                                    <h3>Bước 3 - Theo dõi thời gian thực</h3>
+                                    <p>Quan sát quá trình phân loại trên màn hình "Giám sát" và theo dõi các số liệu
+                                        thống kê trực tiếp cũng như hoạt động của băng chuyền.</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
+
             </div>
         </div>
+    </div>
         <!-- Mobile Bottom Nav -->
         <nav class="mobile-bottom-nav">
             <a href="/" class="mobile-nav-item" id="mobile-nav-home">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                 <span>Giám sát</span>
             </a>
-            <a href="/history.html" class="mobile-nav-item active" id="mobile-nav-history" style="display:none;">
+            <a href="/history.html" class="mobile-nav-item" id="mobile-nav-history" style="display:none;">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                 <span>Lịch sử</span>
             </a>
@@ -127,7 +128,7 @@
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>
                 <span>Quản lý</span>
             </a>
-            <a href="/help.html" class="mobile-nav-item" id="mobile-nav-settings">
+            <a href="/help.html" class="mobile-nav-item active" id="mobile-nav-settings">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                 <span>Trợ giúp</span>
             </a>
@@ -139,7 +140,20 @@
     <script src="js/utils/helpers.js"></script>
     <script src="js/api.js"></script>
     <script src="js/components/header.js"></script>
-    <script src="js/pages/history.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            initSidebar();
+
+            // Simple logic to switch active cards (visual only for now)
+            const cards = document.querySelectorAll('.help-category-card');
+            cards.forEach(card => {
+                card.addEventListener('click', () => {
+                    cards.forEach(c => c.classList.remove('active'));
+                    card.classList.add('active');
+                });
+            });
+        });
+    </script>
 </body>
 
 </html>
