@@ -4,7 +4,7 @@ Hệ thống quản lý và giám sát quy trình phân loại tự động cà 
 
 ## 1. Công nghệ sử dụng
 - **Backend**: Java 17, Spring Boot, Spring Data JPA, WebSocket, Spring Security (JWT, RBAC).
-- **Frontend**: HTML, CSS, JavaScript (Vanilla, Fetch API, WebSocket).
+- **Frontend**: HTML, CSS, JavaScript (Vanilla, Fetch API, WebSocket). Giao diện Responsive UI tương thích cả Desktop và Mobile.
 - **Database**: PostgreSQL.
 - **Message Broker**: MQTT.
 - **Storage**: MinIO (lưu trữ hình ảnh từ AI Camera).
@@ -138,25 +138,33 @@ Một số API nhạy cảm yêu cầu User gửi kèm Token có chứa quyền 
 
 ---
 
-## 6. Giao diện và API mở rộng
+## 6. Giao diện và Giao thức kết nối
+ 
+ 1. **Dashboard Giám sát Thời gian thực (Home Page)**
+    - Truy cập: `http://localhost:8080/`
+    - Giao diện thân thiện tương thích trên mọi thiết bị (Responsive).
+    - Hiển thị trực tiếp quá trình quả chạy qua các trạm trên băng chuyền (Phát hiện -> Chuyển -> Phân loại -> Vào hộp).
+ 
+ 2. **Lịch sử dữ liệu (History Page)**
+    - Truy cập: `http://localhost:8080/history.html`
+    - Thống kê dạng bảng chi tiết các trái cà chua đã quét theo từng mẻ (Batch).
+ 
+ 3. **Quản lý người dùng và Quyền (Admin Page)**
+    - Giao diện Admin quản lý tài khoản và phân quyền cho hệ thống.
 
-1. **Dashboard Thời gian thực (Home Page)**
-   - Truy cập: `http://localhost:8080/`
-   - Hiển thị trực tiếp quá trình cà chua đi qua 3 trạm. Bảng thống kê bên phải cập nhật liên tục.
-
-2. **Lịch sử dữ liệu (History Page)**
-   - Truy cập: `http://localhost:8080/history.html`
-   - Hiển thị bảng chi tiết các trái cà chua đã quét theo từng Batch.
-
-3. **API Nhận dữ liệu từ AI (Dành cho AI Server)**
-   - Endpoint: `POST /api/fruit`
-   - Chú ý: Endpoint này được mở công khai (`permitAll`) để AI Server có thể bắn trực tiếp mà không cần Login.
-   - Payload mẫu (Ví dụ code Python gửi sang):
-     ```json
-     {
-         "id": "CAM1_123",
-         "result": "RIPE",
-         "imageUrl": "http://localhost:9000/tomatoes/CAM1_123.jpg",
-         "confidence": 0.95
-     }
-     ```
+ 4. **Giao thức Nhận dữ liệu (Dành cho AI Camera & ESP32)**
+    - Dữ liệu được gửi hoàn toàn qua **MQTT**.
+    - Topic: `tomato/events`
+    - Payload mẫu (Định dạng JSON gửi từ Camera hoặc Vi điều khiển):
+      ```json
+      {
+          "event": "detected", // Các sự kiện: detected, classified, transfer, sorted, status
+          "id": "6453745",
+          "label": "RIPE",
+          "type": null,
+          "image_url": "http://192.168.1.166:9000/tomatoes/6453745.jpg",
+          "confidence": 0.95,
+          "timestamp": "2026-06-03 22:42:10"
+      }
+      ```
+    - Khi có sự kiện `status`, hệ thống cập nhật trạng thái hoạt động (VD: `Running`, `Stopped`) của băng chuyền lên giao diện thông qua WebSocket.
