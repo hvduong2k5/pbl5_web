@@ -105,7 +105,12 @@ public class RoleService {
             throw new IllegalArgumentException("Không thể xóa các Role hệ thống mặc định (ADMIN, OPERATOR).");
         }
 
-        roleRepository.delete(role);
+        try {
+            roleRepository.delete(role);
+            roleRepository.flush();
+        } catch (org.springframework.dao.DataIntegrityViolationException e) {
+            throw new IllegalArgumentException("Không thể xóa vai trò này vì đang có người dùng được gán vai trò này.");
+        }
     }
 
     private RoleResponseDTO mapToResponse(Role role) {
