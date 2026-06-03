@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,6 +10,7 @@
     <link rel="stylesheet" href="css/layout.css">
     <link rel="stylesheet" href="css/components.css">
 </head>
+
 <body>
     <div class="app-wrapper">
         <!-- Sidebar Navigation -->
@@ -17,15 +19,16 @@
             <ul class="sidebar-menu">
                 <li><a href="/" id="nav-home"><span class="nav-icon">📊</span> Giám sát</a></li>
                 <li><a href="/history.html" id="nav-history"><span class="nav-icon">🕐</span> Lịch sử</a></li>
-                <li id="nav-admin-item"><a href="/admin.html" class="active" id="nav-admin"><span class="nav-icon">👥</span> Quản lý người dùng</a></li>
+                <li id="nav-admin-item"><a href="/admin.html" class="active" id="nav-admin"><span
+                            class="nav-icon">👥</span> Quản lý người dùng</a></li>
             </ul>
             <div class="sidebar-actions" id="sidebar-actions">
-                <button id="btn-new-batch" class="btn-new-batch">+ Tạo mới</button>
+                <button id="btn-new-batch" class="btn-new-batch hidden">+ Tạo mới</button>
                 <a href="/help.html" class="sidebar-link" id="nav-help">
-                    <span>ℹ️</span> Trợ giúp
+                    Trợ giúp
                 </a>
                 <button class="sidebar-link logout" id="btn-logout">
-                    <span>↪️</span> Đăng xuất
+                    Đăng xuất
                 </button>
             </div>
         </nav>
@@ -122,7 +125,8 @@
                                     <input type="hidden" id="userId" />
                                     <div class="form-group">
                                         <label for="username">Tên đăng nhập (tối thiểu 3 ký tự)</label>
-                                        <input type="text" id="username" name="username" class="form-control" required />
+                                        <input type="text" id="username" name="username" class="form-control"
+                                            required />
                                     </div>
                                     <div class="form-group">
                                         <label for="password">Mật khẩu (tối thiểu 6 ký tự)</label>
@@ -138,7 +142,8 @@
                                     </div>
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" onclick="closeModal('user-modal')">Hủy</button>
+                                    <button type="button" class="btn btn-secondary"
+                                        onclick="closeModal('user-modal')">Hủy</button>
                                     <button type="submit" class="btn btn-primary">Lưu người dùng</button>
                                 </div>
                             </form>
@@ -158,7 +163,8 @@
                                     <input type="hidden" id="roleId" />
                                     <div class="form-group">
                                         <label for="roleName">Tên vai trò</label>
-                                        <input type="text" id="roleName" name="roleName" class="form-control" placeholder="VD: MANAGER" required />
+                                        <input type="text" id="roleName" name="roleName" class="form-control"
+                                            placeholder="VD: MANAGER" required />
                                     </div>
                                     <div class="form-group">
                                         <label>Gán quyền hạn</label>
@@ -166,7 +172,8 @@
                                     </div>
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" onclick="closeModal('role-modal')">Hủy</button>
+                                    <button type="button" class="btn btn-secondary"
+                                        onclick="closeModal('role-modal')">Hủy</button>
                                     <button type="submit" class="btn btn-primary">Lưu vai trò</button>
                                 </div>
                             </form>
@@ -190,4 +197,5 @@
         }
     </script>
 </body>
+
 </html>

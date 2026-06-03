@@ -49,8 +49,8 @@ function initSidebar() {
     // New batch button visibility (only if has permission)
     const btnNewBatch = document.getElementById('btn-new-batch');
     if (btnNewBatch) {
-        if (!hasAuthority('MANAGE_BATCH') && !hasAuthority('ROLE_ADMIN')) {
-            btnNewBatch.style.display = 'none';
+        if (hasAuthority('MANAGE_BATCH') || hasAuthority('ROLE_ADMIN')) {
+            btnNewBatch.classList.remove('hidden');
         }
     }
 }
