@@ -25,11 +25,11 @@ function initSidebar() {
                 if (adminItem) adminItem.classList.remove('hidden');
             }
 
-            // Hide history nav if doesn't have VIEW_HISTORY (unless admin)
-            if (!hasAuthority('VIEW_HISTORY') && !hasAuthority('ROLE_ADMIN')) {
-                const historyNav = document.getElementById('nav-history');
-                if (historyNav && historyNav.parentElement) {
-                    historyNav.parentElement.style.display = 'none';
+            // Show history nav if has VIEW_HISTORY or ROLE_ADMIN
+            if (hasAuthority('VIEW_HISTORY') || hasAuthority('ROLE_ADMIN')) {
+                const historyItem = document.getElementById('nav-history-item');
+                if (historyItem) {
+                    historyItem.classList.remove('hidden');
                 }
             }
         }
