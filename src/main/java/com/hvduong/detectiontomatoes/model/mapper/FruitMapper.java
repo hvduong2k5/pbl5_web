@@ -37,10 +37,14 @@ public class FruitMapper {
                 }
             }
         }
+        String label = fruit.getLabel();
+        if ("rotten".equalsIgnoreCase(label)) {
+            label = "reject";
+        }
         return FruitEventDTO.builder()
                 .event(event)
                 .id(fruit.getId())
-                .label(fruit.getLabel())
+                .label(label)
                 .type(fruit.getSortedType())
                 .image_url(imageUrl)
                 .confidence(fruit.getConfidence())

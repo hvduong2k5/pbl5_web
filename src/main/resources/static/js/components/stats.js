@@ -8,6 +8,6 @@ function renderStats(stats) {
         <div class="stats-item"><span>Wait:</span> <strong>${stats.wait}</strong></div>
         <div class="stats-item"><span>Ripe:</span> <strong>${stats.ripe}</strong></div>
         <div class="stats-item"><span>Unripe:</span> <strong>${stats.unripe}</strong></div>
-        <div class="stats-item"><span>Rotten:</span> <strong>${stats.rotten}</strong></div>
+        <div class="stats-item"><span>Reject:</span> <strong>${stats.reject}</strong></div>
     `;
 }

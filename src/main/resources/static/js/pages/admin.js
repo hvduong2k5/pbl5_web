@@ -265,7 +265,7 @@ async function initAdminPage() {
             
             allUsers.forEach(u => {
                 const tr = document.createElement('tr');
-                const badgeClass = u.enabled ? 'badge sorted' : 'badge rotten';
+                const badgeClass = u.enabled ? 'badge sorted' : 'badge reject';
                 const statusText = u.enabled ? 'Active' : 'Disabled';
                 
                 tr.innerHTML = `

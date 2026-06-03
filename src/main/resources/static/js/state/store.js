@@ -3,7 +3,7 @@ const Store = {
         currentBatch: null,
         fruits: {}, // id -> fruit data
         stats: {
-            ripe: 0, unripe: 0, rotten: 0, total: 0, wait: 0
+            ripe: 0, unripe: 0, reject: 0, total: 0, wait: 0
         },
         systemStatus: null
     },

@@ -70,7 +70,7 @@ public class FruitService {
         List<Object[]> labelCounts = fruitRepository.countLabelsByBatchId(batchId);
         stats.put("ripe", 0);
         stats.put("unripe", 0);
-        stats.put("rotten", 0); // Defaults
+        stats.put("reject", 0); // Defaults
 
         for (Object[] row : labelCounts) {
             String label = (String) row[0];
@@ -78,7 +78,8 @@ public class FruitService {
             if (label != null) {
                 // Map green to unripe if needed, or directly use unripe
                 if (label.equals("green")) label = "unripe";
-                stats.put(label, count.intValue());
+                if (label.equals("rotten")) label = "reject";
+                stats.put(label, stats.getOrDefault(label, 0) + count.intValue());
             }
         }
         return stats;
@@ -96,7 +97,7 @@ public class FruitService {
         emptyStats.put("wait", 0);
         emptyStats.put("ripe", 0);
         emptyStats.put("unripe", 0);
-        emptyStats.put("rotten", 0);
+        emptyStats.put("reject", 0);
         return emptyStats;
     }
 
@@ -214,7 +215,12 @@ public class FruitService {
         Map<String, Object> map = new HashMap<>();
         map.put("id", f.getId());
         map.put("status", f.getStatus());
-        map.put("label", f.getLabel());
+        
+        String label = f.getLabel();
+        if ("rotten".equalsIgnoreCase(label)) {
+            label = "reject";
+        }
+        map.put("label", label);
         map.put("sortedType", f.getSortedType());
         map.put("createdAt", f.getCreatedAt() != null ? f.getCreatedAt().toString() : null);
         map.put("classifiedAt", f.getClassifiedAt() != null ? f.getClassifiedAt().toString() : null);
