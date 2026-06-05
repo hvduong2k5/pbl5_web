@@ -59,6 +59,7 @@ async function initHistoryPage() {
                 const fmtSorted = f.sortedAt ? formatDate(f.sortedAt).replace('\n', '<br>') : '';
 
                 tr.innerHTML = `
+                    <td style="color:var(--primary-color); font-weight:600;">${f.batchName || '---'}</td>
                     <td style="font-weight:600;">#${f.id}</td>
                     <td>${f.espId || '---'}</td>
                     <td>${imgHtml}</td>
@@ -80,6 +81,9 @@ async function initHistoryPage() {
                                 <div class="card-title-row">
                                     <span class="card-id">#${f.id} <small>(ESP_ID: ${f.espId || '---'})</small></span>
                                     <span class="card-time">${f.createdAt ? new Date(f.createdAt).toLocaleTimeString() : '---'}</span>
+                                </div>
+                                <div class="card-title-row" style="margin-top: 4px; margin-bottom: 8px;">
+                                    <span style="font-size: 0.8em; color: var(--text-secondary);">Lô: <b style="color:var(--primary-color)">${f.batchName || '---'}</b></span>
                                 </div>
                                 <div class="card-details-row">
                                     <span class="badge ${badgeClass}">${labelVi}</span>

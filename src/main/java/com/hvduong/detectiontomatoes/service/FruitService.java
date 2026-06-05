@@ -100,11 +100,9 @@ public class FruitService {
         return emptyStats;
     }
 
-    private void broadcastStatsForBatch(Batch batch) {
-        if (batch != null) {
-            Map<String, Integer> stats = getStatsByBatch(batch.getId());
-            webSocketHandler.broadcastStats(stats);
-        }
+    private void broadcastCurrentStats() {
+        // Dùng luôn getCurrentStats()
+        webSocketHandler.broadcastStats(getCurrentStats());
     }
 
     public void handleSystemStatus(FruitEventDTO dto) {
@@ -138,7 +136,7 @@ public class FruitService {
         fruitRepository.save(fruit);
         
         webSocketHandler.broadcastEvent(fruitMapper.toEventDTO(fruit, "detected"));
-        broadcastStatsForBatch(batch);
+        broadcastCurrentStats();
     }
 
     @Transactional
@@ -155,7 +153,7 @@ public class FruitService {
         fruitRepository.save(fruit);
         
         webSocketHandler.broadcastEvent(fruitMapper.toEventDTO(fruit, "classified"));
-        broadcastStatsForBatch(fruit.getBatch());
+        broadcastCurrentStats();
     }
 
     @Transactional
@@ -171,7 +169,7 @@ public class FruitService {
         fruitRepository.save(fruit);
         
         webSocketHandler.broadcastEvent(fruitMapper.toEventDTO(fruit, "sorted"));
-        broadcastStatsForBatch(fruit.getBatch());
+        broadcastCurrentStats();
     }
 
     @Transactional
@@ -204,7 +202,7 @@ public class FruitService {
         }
         
         webSocketHandler.broadcastEvent(fruitMapper.toEventDTO(fruit, "classified"));
-        broadcastStatsForBatch(batch);
+        broadcastCurrentStats();
     }
 
     @Transactional
@@ -220,7 +218,7 @@ public class FruitService {
         fruitRepository.save(fruit);
         
         webSocketHandler.broadcastEvent(fruitMapper.toEventDTO(fruit, "transfer"));
-        broadcastStatsForBatch(fruit.getBatch());
+        broadcastCurrentStats();
     }
 
     private Map<String, Object> toFruitMap(Fruit f) {
@@ -234,6 +232,7 @@ public class FruitService {
         map.put("createdAt", f.getCreatedAt() != null ? f.getCreatedAt().toString() : null);
         map.put("classifiedAt", f.getClassifiedAt() != null ? f.getClassifiedAt().toString() : null);
         map.put("sortedAt", f.getSortedAt() != null ? f.getSortedAt().toString() : null);
+        map.put("batchName", f.getBatch() != null ? f.getBatch().getName() : "");
         
         String imageUrl = f.getImageUrl();
         if (imageUrl != null && !imageUrl.isEmpty()) {

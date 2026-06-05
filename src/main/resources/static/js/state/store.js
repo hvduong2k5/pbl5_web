@@ -43,6 +43,7 @@ const Store = {
         
         const fruit = this.state.fruits[id];
 
+        if (fruitEvent.espId) fruit.espId = fruitEvent.espId;
         if (fruitEvent.status) fruit.status = fruitEvent.status;
         if (fruitEvent.label) fruit.label = fruitEvent.label;
         
