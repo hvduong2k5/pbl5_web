@@ -3,7 +3,7 @@ function renderStats(stats) {
     if (!container) return;
     
     container.innerHTML = `
-        <div class="panel-title">Thống kê lô hiện tại</div>
+        <div class="panel-title">Thống kê lô hàng hiện tại</div>
         <div class="panel-body">
             <ul class="stats-list">
                 <li class="stat-total">
@@ -57,20 +57,20 @@ function renderBatchInfo(batch) {
     if (batch) {
         const createdAt = batch.createdAt ? formatDate(batch.createdAt).replace('\n', ' - ') : '';
         container.innerHTML = `
-            <div class="panel-title">Lô hiện tại</div>
+            <div class="panel-title">Lô hàng hiện tại</div>
             <div class="panel-body">
                 <div class="batch-info">
-                    <div class="batch-name">Lô: ${batch.name || 'N/A'}</div>
+                    <div class="batch-name">Lô hàng: ${batch.name || 'N/A'}</div>
                     <div class="batch-detail">${createdAt ? 'Bắt đầu: ' + createdAt : ''}</div>
                 </div>
             </div>
         `;
     } else {
         container.innerHTML = `
-            <div class="panel-title">Lô hiện tại</div>
+            <div class="panel-title">Lô hàng hiện tại</div>
             <div class="panel-body">
                 <div class="batch-info">
-                    <div class="batch-detail" style="color: var(--text-muted);">Không có lô đang hoạt động</div>
+                    <div class="batch-detail" style="color: var(--text-muted);">Không có lô hàng đang hoạt động</div>
                 </div>
             </div>
         `;

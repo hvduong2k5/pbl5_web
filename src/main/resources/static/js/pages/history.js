@@ -17,7 +17,7 @@ async function initHistoryPage() {
             batchSelect.appendChild(opt);
         });
     } catch (e) {
-        console.error('[ERROR History] Lỗi khi load danh sách lô:', e);
+        console.error('[ERROR History] Lỗi khi load danh sách lô hàng:', e);
     }
 
     async function loadHistory() {
@@ -103,7 +103,7 @@ async function initHistoryPage() {
             btnExport.addEventListener('click', async () => {
                 const val = batchSelect.value;
                 if (val === 'all') {
-                    alert('Vui lòng chọn một lô cụ thể để xuất dữ liệu.');
+                    alert('Vui lòng chọn một lô hàng cụ thể để xuất dữ liệu.');
                     return;
                 }
 

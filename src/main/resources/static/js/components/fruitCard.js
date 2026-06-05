@@ -58,7 +58,7 @@ function createFruitCard(fruit, queueType) {
             <span>${sortedTime}</span>
         </div>
         <div class="fruit-card-row">
-            <b>Độ chính xác</b>
+            <b>Độ tin cậy</b>
             <span>${confidenceHtml}</span>
         </div>
     `;
