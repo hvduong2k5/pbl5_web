@@ -128,8 +128,8 @@ public class FruitService {
         if (dto.getConfidence() != null) {
             fruit.setConfidence(dto.getConfidence());
         }
-        if (dto.getImage_url() != null) {
-            fruit.setImageUrl(dto.getImage_url());
+        if (dto.getImageUrl() != null) {
+            fruit.setImageUrl(dto.getImageUrl());
         }
         fruitRepository.save(fruit);
         
@@ -143,7 +143,7 @@ public class FruitService {
         if (fruit == null || isAlreadyProcessed(fruit, "classified")) return;
         fruit.setLabel(dto.getLabel());
         if (dto.getConfidence() != null) fruit.setConfidence(dto.getConfidence());
-        if (dto.getImage_url() != null) fruit.setImageUrl(dto.getImage_url());
+        if (dto.getImageUrl() != null) fruit.setImageUrl(dto.getImageUrl());
         fruit.setClassifiedAt(LocalDateTime.now());
         fruit.setStatus("CLASSIFIED");
         fruitRepository.save(fruit);
@@ -156,7 +156,7 @@ public class FruitService {
     public void handleSorted(FruitEventDTO dto) {
         Fruit fruit = fruitRepository.findById(dto.getId()).orElse(null);
         if (fruit == null || isAlreadyProcessed(fruit, "sorted")) return;
-        fruit.setSortedType(dto.getType());
+        fruit.setSortedType(dto.getSortedType());
         if (dto.getConfidence() != null) fruit.setConfidence(dto.getConfidence());
         fruit.setSortedAt(LocalDateTime.now());
         fruit.setStatus("SORTED");
@@ -201,7 +201,7 @@ public class FruitService {
         Fruit fruit = fruitRepository.findById(dto.getId()).orElse(null);
         if (fruit == null || isAlreadyProcessed(fruit, "transfer")) return;
         if (dto.getLabel() != null) fruit.setLabel(dto.getLabel());
-        if (dto.getType() != null) fruit.setSortedType(dto.getType());
+        if (dto.getSortedType() != null) fruit.setSortedType(dto.getSortedType());
         if (dto.getConfidence() != null) fruit.setConfidence(dto.getConfidence());
         fruit.setStatus("TRANSFERRED");
         fruitRepository.save(fruit);
