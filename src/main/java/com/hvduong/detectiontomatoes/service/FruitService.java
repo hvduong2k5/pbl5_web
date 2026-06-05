@@ -119,8 +119,17 @@ public class FruitService {
         if (batch != null) {
             fruit = fruitRepository.findByEspIdAndBatch_Id(dto.getId(), batch.getId()).orElse(null);
         }
-        if (fruit != null && isAlreadyProcessed(fruit, "detected")) return;
-        if (fruit == null) {
+        
+        if (fruit != null) {
+            // NẾU TRÙNG ESP_ID TRONG CÙNG LÔ HÀNG -> GHI ĐÈ (RESET)
+            fruit.setLabel(null);
+            fruit.setSortedType(null);
+            fruit.setClassifiedAt(null);
+            fruit.setSortedAt(null);
+            // Cập nhật lại thời gian tạo mới
+            fruit.setCreatedAt(LocalDateTime.now());
+        } else {
+            // Nếu không trùng thì tạo mới
             fruit = fruitMapper.toEntity(dto);
             fruit.setCreatedAt(LocalDateTime.now());
             fruit.setBatch(batch);
