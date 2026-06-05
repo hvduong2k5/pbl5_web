@@ -14,7 +14,7 @@ public class FruitMapper {
 
     public Fruit toEntity(FruitEventDTO dto) {
         return Fruit.builder()
-                .id(dto.getId())
+                .espId(dto.getId()) // When receiving from ESP, dto.getId() contains the espId
                 .label(dto.getLabel())
                 .confidence(dto.getConfidence())
                 .build();
@@ -41,7 +41,8 @@ public class FruitMapper {
 
         return FruitEventDTO.builder()
                 .event(event)
-                .id(fruit.getId())
+                .id(fruit.getId() != null ? fruit.getId().toString() : null)
+                .espId(fruit.getEspId())
                 .label(fruit.getLabel())
                 .sortedType(fruit.getSortedType())
                 .status(fruit.getStatus())

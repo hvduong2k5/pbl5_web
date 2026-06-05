@@ -15,6 +15,7 @@ import lombok.NoArgsConstructor;
 public class FruitEventDTO {
     private String event;
     private String id;
+    private String espId;
     private String label;
     
     @JsonAlias("type")

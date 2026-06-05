@@ -107,6 +107,26 @@
                                 </div>
                             </div>
                         </div>
+
+                        <div class="help-content-title" style="margin-top: 40px;">Câu hỏi thường gặp (FAQ)</div>
+                        <div class="help-step-list">
+                            <div class="help-step-item">
+                                <div class="help-step-icon">🏷️</div>
+                                <div class="help-step-content">
+                                    <h3>Sự khác biệt giữa "ID" và "ESP_ID" là gì?</h3>
+                                    <p>Trong hệ thống giám sát và lịch sử, bạn sẽ thấy 2 loại mã định danh:</p>
+                                    <ul style="margin-top: 10px; padding-left: 20px; color: var(--text-secondary); line-height: 1.6;">
+                                        <li><b>ID (Mã hệ thống):</b> Là mã định danh duy nhất và liên tục do máy chủ (Database) tự động sinh ra. Mã này không bao giờ bị trùng lặp trên toàn bộ hệ thống, giúp theo dõi chính xác từng quả.</li>
+                                        <li>
+                                            <b>ESP_ID (Mã thiết bị):</b> Là mã thứ tự do vi điều khiển (ESP32) hoặc AI cấp phát khi phát hiện quả trên băng chuyền. Mã này có thể bị lặp lại hoặc reset về 0 nếu khởi động lại phần cứng hoặc chạy một lô hàng mới. Hệ thống lưu lại để thuận tiện cho việc đối chiếu với camera hoặc dữ liệu thô.
+                                            <div style="margin-top: 8px; padding: 10px; background: rgba(255, 193, 7, 0.1); border-left: 3px solid #ffc107; border-radius: 4px; color: var(--text-color);">
+                                                <b>⚠️ Lưu ý quan trọng:</b> Trong cùng 1 lô hàng (Batch), mã <code>ESP_ID</code> <b>không được trùng nhau</b>. Hệ thống xác định dữ liệu dựa trên cặp <code>(ESP_ID, Lô hàng)</code>. Nếu thiết bị gửi lên một <code>ESP_ID</code> đã tồn tại trong lô hàng hiện tại, hệ thống sẽ hiểu là bản cập nhật và <b>ghi đè</b> lên dữ liệu cũ của quả đó.
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 

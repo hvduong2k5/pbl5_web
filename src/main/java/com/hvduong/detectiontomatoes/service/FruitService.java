@@ -116,14 +116,18 @@ public class FruitService {
 
     @Transactional
     public void handleDetected(FruitEventDTO dto) {
-        Fruit fruit = fruitRepository.findById(dto.getId()).orElse(null);
-        if (fruit != null && isAlreadyProcessed(fruit, "detected")) return;
         Batch batch = getCurrentBatch();
+        Fruit fruit = null;
+        if (batch != null) {
+            fruit = fruitRepository.findByEspIdAndBatch_Id(dto.getId(), batch.getId()).orElse(null);
+        }
+        if (fruit != null && isAlreadyProcessed(fruit, "detected")) return;
         if (fruit == null) {
             fruit = fruitMapper.toEntity(dto);
             fruit.setCreatedAt(LocalDateTime.now());
             fruit.setBatch(batch);
         }
+        
         fruit.setStatus("DETECTED");
         if (dto.getConfidence() != null) {
             fruit.setConfidence(dto.getConfidence());
@@ -139,7 +143,9 @@ public class FruitService {
 
     @Transactional
     public void handleClassified(FruitEventDTO dto) {
-        Fruit fruit = fruitRepository.findById(dto.getId()).orElse(null);
+        Batch batch = getCurrentBatch();
+        if (batch == null) return;
+        Fruit fruit = fruitRepository.findByEspIdAndBatch_Id(dto.getId(), batch.getId()).orElse(null);
         if (fruit == null || isAlreadyProcessed(fruit, "classified")) return;
         fruit.setLabel(dto.getLabel());
         if (dto.getConfidence() != null) fruit.setConfidence(dto.getConfidence());
@@ -154,7 +160,9 @@ public class FruitService {
 
     @Transactional
     public void handleSorted(FruitEventDTO dto) {
-        Fruit fruit = fruitRepository.findById(dto.getId()).orElse(null);
+        Batch batch = getCurrentBatch();
+        if (batch == null) return;
+        Fruit fruit = fruitRepository.findByEspIdAndBatch_Id(dto.getId(), batch.getId()).orElse(null);
         if (fruit == null || isAlreadyProcessed(fruit, "sorted")) return;
         fruit.setSortedType(dto.getSortedType());
         if (dto.getConfidence() != null) fruit.setConfidence(dto.getConfidence());
@@ -169,8 +177,11 @@ public class FruitService {
     @Transactional
     public void handleAiResponse(AiResponseDTO dto) {
         System.out.println("[AI POST LOG] Nhận dữ liệu cập nhật từ AI: " + dto);
-        Fruit fruit = fruitRepository.findById(dto.getId()).orElse(null);
         Batch batch = getCurrentBatch();
+        Fruit fruit = null;
+        if (batch != null) {
+            fruit = fruitRepository.findByEspIdAndBatch_Id(dto.getId(), batch.getId()).orElse(null);
+        }
         
         if (fruit != null) {
             fruitMapper.updateFromAiResponse(fruit, dto);
@@ -181,7 +192,7 @@ public class FruitService {
         } else {
             // Nếu không tìm thấy thì tạo mới Fruit
             fruit = new Fruit();
-            fruit.setId(dto.getId());
+            fruit.setEspId(dto.getId());
             fruit.setLabel(dto.getResult());
             fruit.setImageUrl(dto.getImageUrl());
             fruit.setConfidence(dto.getConfidence());
@@ -198,7 +209,9 @@ public class FruitService {
 
     @Transactional
     public void handleTransfer(FruitEventDTO dto) {
-        Fruit fruit = fruitRepository.findById(dto.getId()).orElse(null);
+        Batch batch = getCurrentBatch();
+        if (batch == null) return;
+        Fruit fruit = fruitRepository.findByEspIdAndBatch_Id(dto.getId(), batch.getId()).orElse(null);
         if (fruit == null || isAlreadyProcessed(fruit, "transfer")) return;
         if (dto.getLabel() != null) fruit.setLabel(dto.getLabel());
         if (dto.getSortedType() != null) fruit.setSortedType(dto.getSortedType());
@@ -213,6 +226,7 @@ public class FruitService {
     private Map<String, Object> toFruitMap(Fruit f) {
         Map<String, Object> map = new HashMap<>();
         map.put("id", f.getId());
+        map.put("espId", f.getEspId());
         map.put("status", f.getStatus());
         
         map.put("label", f.getLabel());

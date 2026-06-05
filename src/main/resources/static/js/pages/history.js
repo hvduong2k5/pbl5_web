@@ -60,6 +60,7 @@ async function initHistoryPage() {
 
                 tr.innerHTML = `
                     <td style="font-weight:600;">#${f.id}</td>
+                    <td>${f.espId || '---'}</td>
                     <td>${imgHtml}</td>
                     <td>${f.label ? `<span class="badge ${badgeClass}">${labelVi}</span>` : ''}</td>
                     <td style="font-size:0.85em; color:var(--text-secondary);">${fmtCreated}</td>
@@ -77,7 +78,7 @@ async function initHistoryPage() {
                             </div>
                             <div class="card-content-col">
                                 <div class="card-title-row">
-                                    <span class="card-id">#${f.id}</span>
+                                    <span class="card-id">#${f.id} <small>(ESP_ID: ${f.espId || '---'})</small></span>
                                     <span class="card-time">${f.createdAt ? new Date(f.createdAt).toLocaleTimeString() : '---'}</span>
                                 </div>
                                 <div class="card-details-row">

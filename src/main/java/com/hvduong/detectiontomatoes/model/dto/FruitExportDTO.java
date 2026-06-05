@@ -8,9 +8,13 @@ import lombok.Data;
 @Data
 @ContentRowHeight(80)
 public class FruitExportDTO {
-    @ExcelProperty("Mã quả")
+    @ExcelProperty("Mã quả (Hệ thống)")
     @ColumnWidth(20)
-    private String id;
+    private Integer id;
+
+    @ExcelProperty("Mã quả ESP")
+    @ColumnWidth(20)
+    private String espId;
 
     @ExcelProperty("Hình ảnh")
     @ColumnWidth(20)

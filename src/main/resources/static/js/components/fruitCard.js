@@ -10,13 +10,13 @@ function createFruitCard(fruit, queueType) {
         imgHtml = `
             <div class="fruit-card-img-wrapper">
                 <img src="${fruit.imageUrl}" alt="${fruit.id}" loading="lazy">
-                <span class="fruit-card-id-overlay">ID: #${fruit.id}</span>
+                <span class="fruit-card-id-overlay">ID: #${fruit.id} ${fruit.espId ? `(ESP_ID: ${fruit.espId})` : ''}</span>
             </div>`;
     } else {
         imgHtml = `
             <div class="fruit-card-img-wrapper">
                 <div class="fruit-no-img">Không có ảnh</div>
-                <span class="fruit-card-id-overlay">ID: #${fruit.id}</span>
+                <span class="fruit-card-id-overlay">ID: #${fruit.id} ${fruit.espId ? `(ESP_ID: ${fruit.espId})` : ''}</span>
             </div>`;
     }
 
