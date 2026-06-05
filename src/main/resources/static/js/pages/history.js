@@ -17,7 +17,7 @@ async function initHistoryPage() {
             batchSelect.appendChild(opt);
         });
     } catch (e) {
-        console.error('[ERROR History] Lỗi khi load danh sách lô:', e);
+        console.error('[ERROR History] Lỗi khi load danh sách lô hàng:', e);
     }
 
     async function loadHistory() {
@@ -59,7 +59,9 @@ async function initHistoryPage() {
                 const fmtSorted = f.sortedAt ? formatDate(f.sortedAt).replace('\n', '<br>') : '';
 
                 tr.innerHTML = `
+                    <td style="color:var(--primary-color); font-weight:600;">${f.batchName || '---'}</td>
                     <td style="font-weight:600;">#${f.id}</td>
+                    <td>${f.espId || '---'}</td>
                     <td>${imgHtml}</td>
                     <td>${f.label ? `<span class="badge ${badgeClass}">${labelVi}</span>` : ''}</td>
                     <td style="font-size:0.85em; color:var(--text-secondary);">${fmtCreated}</td>
@@ -77,8 +79,11 @@ async function initHistoryPage() {
                             </div>
                             <div class="card-content-col">
                                 <div class="card-title-row">
-                                    <span class="card-id">#${f.id}</span>
+                                    <span class="card-id">#${f.id} <small>(ESP_ID: ${f.espId || '---'})</small></span>
                                     <span class="card-time">${f.createdAt ? new Date(f.createdAt).toLocaleTimeString() : '---'}</span>
+                                </div>
+                                <div class="card-title-row" style="margin-top: 4px; margin-bottom: 8px;">
+                                    <span style="font-size: 0.8em; color: var(--text-secondary);">Lô: <b style="color:var(--primary-color)">${f.batchName || '---'}</b></span>
                                 </div>
                                 <div class="card-details-row">
                                     <span class="badge ${badgeClass}">${labelVi}</span>
@@ -103,7 +108,7 @@ async function initHistoryPage() {
             btnExport.addEventListener('click', async () => {
                 const val = batchSelect.value;
                 if (val === 'all') {
-                    alert('Vui lòng chọn một lô cụ thể để xuất dữ liệu.');
+                    alert('Vui lòng chọn một lô hàng cụ thể để xuất dữ liệu.');
                     return;
                 }
 

@@ -61,6 +61,7 @@ public class FruitExportService {
                 List<FruitExportDTO> data = page.getContent().stream().map(fruit -> {
                     FruitExportDTO dto = new FruitExportDTO();
                     dto.setId(fruit.getId());
+                    dto.setEspId(fruit.getEspId());
                     dto.setStatus(fruit.getStatus());
                     dto.setLabel(fruit.getLabel());
                     dto.setCreatedAt(fruit.getCreatedAt() != null ? fruit.getCreatedAt().toString() : null);

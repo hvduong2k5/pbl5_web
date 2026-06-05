@@ -16,7 +16,12 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Builder
 public class Fruit {
     @Id
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+    
+    @Column(name = "esp_id")
+    private String espId;
+    
     private String status;
     private String label;
     @Column(name = "sorted_type")

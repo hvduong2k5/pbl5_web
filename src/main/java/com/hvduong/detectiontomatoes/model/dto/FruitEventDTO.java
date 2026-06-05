@@ -1,5 +1,7 @@
 package com.hvduong.detectiontomatoes.model.dto;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,12 +11,23 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class FruitEventDTO {
-    private String event;   // detected / transfer / classified / sorted
+    private String event;
     private String id;
+    private String espId;
     private String label;
-    private String type;
-    private String image_url;
+    
+    @JsonAlias("type")
+    private String sortedType;
+    
+    private String status;
+    
+    @JsonAlias("image_url")
+    private String imageUrl;
+    
     private Double confidence;
-    private String timestamp;
+    private String createdAt;
+    private String classifiedAt;
+    private String sortedAt;
 }

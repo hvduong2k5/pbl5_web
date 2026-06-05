@@ -4,6 +4,7 @@ import com.hvduong.detectiontomatoes.model.entity.Batch;
 import com.hvduong.detectiontomatoes.model.entity.SystemConfig;
 import com.hvduong.detectiontomatoes.repository.BatchRepository;
 import com.hvduong.detectiontomatoes.repository.SystemConfigRepository;
+import com.hvduong.detectiontomatoes.websocket.WebSocketHandler;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,10 +18,12 @@ import java.util.stream.Collectors;
 public class BatchService {
     private final BatchRepository batchRepository;
     private final SystemConfigRepository systemConfigRepository;
+    private final WebSocketHandler webSocketHandler;
 
-    public BatchService(BatchRepository batchRepository, SystemConfigRepository systemConfigRepository) {
+    public BatchService(BatchRepository batchRepository, SystemConfigRepository systemConfigRepository, WebSocketHandler webSocketHandler) {
         this.batchRepository = batchRepository;
         this.systemConfigRepository = systemConfigRepository;
+        this.webSocketHandler = webSocketHandler;
     }
 
     public Map<String, Object> toBatchMap(Batch batch) {
@@ -43,6 +46,14 @@ public class BatchService {
         config.setCurrentBatch(batch);
         config.setUpdatedAt(LocalDateTime.now());
         systemConfigRepository.save(config);
+
+        Map<String, Integer> emptyStats = new HashMap<>();
+        emptyStats.put("total", 0);
+        emptyStats.put("wait", 0);
+        emptyStats.put("ripe", 0);
+        emptyStats.put("unripe", 0);
+        emptyStats.put("reject", 0);
+        webSocketHandler.broadcastStats(emptyStats);
 
         return toBatchMap(batch);
     }

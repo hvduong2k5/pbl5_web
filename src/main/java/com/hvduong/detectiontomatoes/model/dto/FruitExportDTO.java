@@ -8,35 +8,39 @@ import lombok.Data;
 @Data
 @ContentRowHeight(80)
 public class FruitExportDTO {
-    @ExcelProperty("ID")
+    @ExcelProperty("Mã quả (Hệ thống)")
     @ColumnWidth(20)
-    private String id;
+    private Integer id;
 
-    @ExcelProperty("Image")
+    @ExcelProperty("Mã quả ESP")
+    @ColumnWidth(20)
+    private String espId;
+
+    @ExcelProperty("Hình ảnh")
     @ColumnWidth(20)
     private byte[] image;
 
-    @ExcelProperty("Status")
+    @ExcelProperty("Trạng thái")
     @ColumnWidth(15)
     private String status;
 
-    @ExcelProperty("Label")
+    @ExcelProperty("Phân loại")
     @ColumnWidth(15)
     private String label;
 
-    @ExcelProperty("Created At")
+    @ExcelProperty("Thời gian tạo")
     @ColumnWidth(25)
     private String createdAt;
 
-    @ExcelProperty("Classified At")
+    @ExcelProperty("Thời gian nhận diện")
     @ColumnWidth(25)
     private String classifiedAt;
 
-    @ExcelProperty("Sorted At")
+    @ExcelProperty("Thời gian hoàn thành")
     @ColumnWidth(25)
     private String sortedAt;
 
-    @ExcelProperty("Confidence")
+    @ExcelProperty("Độ tin cậy")
     @ColumnWidth(15)
     private Double confidence;
 }
