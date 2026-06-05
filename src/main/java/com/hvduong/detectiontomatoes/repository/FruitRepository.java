@@ -8,9 +8,12 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
-public interface FruitRepository extends JpaRepository<Fruit, String> {
+public interface FruitRepository extends JpaRepository<Fruit, Integer> {
     List<Fruit> findAllByBatch_Id(Integer batchId);
+    
+    Optional<Fruit> findByEspIdAndBatch_Id(String espId, Integer batchId);
     
     Page<Fruit> findAllByBatch_Id(Integer batchId, Pageable pageable);
     

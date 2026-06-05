@@ -6,15 +6,15 @@ function initCurrentPage() {
     const btnNewBatch = document.getElementById('btn-new-batch');
     if (btnNewBatch) {
         btnNewBatch.addEventListener('click', async () => {
-            const name = prompt('Nhập tên lô mới (tùy chọn):');
+            const name = prompt('Nhập tên lô hàng mới (tùy chọn):');
             if (name !== null) {
                 try {
                     const newBatch = await API.createNewBatch(name);
                     Store.setBatch(newBatch);
                     Store.setFruits([]);
-                    alert('Tạo lô mới thành công!');
+                    alert('Tạo lô hàng mới thành công!');
                 } catch (e) {
-                    alert('Lỗi khi tạo lô mới: ' + e.message);
+                    alert('Lỗi khi tạo lô hàng mới: ' + e.message);
                 }
             }
         });

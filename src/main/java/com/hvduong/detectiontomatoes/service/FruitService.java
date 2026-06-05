@@ -100,11 +100,9 @@ public class FruitService {
         return emptyStats;
     }
 
-    private void broadcastStatsForBatch(Batch batch) {
-        if (batch != null) {
-            Map<String, Integer> stats = getStatsByBatch(batch.getId());
-            webSocketHandler.broadcastStats(stats);
-        }
+    private void broadcastCurrentStats() {
+        // Dùng luôn getCurrentStats()
+        webSocketHandler.broadcastStats(getCurrentStats());
     }
 
     public void handleSystemStatus(FruitEventDTO dto) {
@@ -116,61 +114,81 @@ public class FruitService {
 
     @Transactional
     public void handleDetected(FruitEventDTO dto) {
-        Fruit fruit = fruitRepository.findById(dto.getId()).orElse(null);
-        if (fruit != null && isAlreadyProcessed(fruit, "detected")) return;
         Batch batch = getCurrentBatch();
-        if (fruit == null) {
+        Fruit fruit = null;
+        if (batch != null) {
+            fruit = fruitRepository.findByEspIdAndBatch_Id(dto.getId(), batch.getId()).orElse(null);
+        }
+        
+        if (fruit != null) {
+            // NẾU TRÙNG ESP_ID TRONG CÙNG LÔ HÀNG -> GHI ĐÈ (RESET)
+            fruit.setLabel(null);
+            fruit.setSortedType(null);
+            fruit.setClassifiedAt(null);
+            fruit.setSortedAt(null);
+            // Cập nhật lại thời gian tạo mới
+            fruit.setCreatedAt(LocalDateTime.now());
+        } else {
+            // Nếu không trùng thì tạo mới
             fruit = fruitMapper.toEntity(dto);
             fruit.setCreatedAt(LocalDateTime.now());
             fruit.setBatch(batch);
         }
+        
         fruit.setStatus("DETECTED");
         if (dto.getConfidence() != null) {
             fruit.setConfidence(dto.getConfidence());
         }
-        if (dto.getImage_url() != null) {
-            fruit.setImageUrl(dto.getImage_url());
+        if (dto.getImageUrl() != null) {
+            fruit.setImageUrl(dto.getImageUrl());
         }
         fruitRepository.save(fruit);
         
         webSocketHandler.broadcastEvent(fruitMapper.toEventDTO(fruit, "detected"));
-        broadcastStatsForBatch(batch);
+        broadcastCurrentStats();
     }
 
     @Transactional
     public void handleClassified(FruitEventDTO dto) {
-        Fruit fruit = fruitRepository.findById(dto.getId()).orElse(null);
+        Batch batch = getCurrentBatch();
+        if (batch == null) return;
+        Fruit fruit = fruitRepository.findByEspIdAndBatch_Id(dto.getId(), batch.getId()).orElse(null);
         if (fruit == null || isAlreadyProcessed(fruit, "classified")) return;
         fruit.setLabel(dto.getLabel());
         if (dto.getConfidence() != null) fruit.setConfidence(dto.getConfidence());
-        if (dto.getImage_url() != null) fruit.setImageUrl(dto.getImage_url());
+        if (dto.getImageUrl() != null) fruit.setImageUrl(dto.getImageUrl());
         fruit.setClassifiedAt(LocalDateTime.now());
         fruit.setStatus("CLASSIFIED");
         fruitRepository.save(fruit);
         
         webSocketHandler.broadcastEvent(fruitMapper.toEventDTO(fruit, "classified"));
-        broadcastStatsForBatch(fruit.getBatch());
+        broadcastCurrentStats();
     }
 
     @Transactional
     public void handleSorted(FruitEventDTO dto) {
-        Fruit fruit = fruitRepository.findById(dto.getId()).orElse(null);
+        Batch batch = getCurrentBatch();
+        if (batch == null) return;
+        Fruit fruit = fruitRepository.findByEspIdAndBatch_Id(dto.getId(), batch.getId()).orElse(null);
         if (fruit == null || isAlreadyProcessed(fruit, "sorted")) return;
-        fruit.setSortedType(dto.getType());
+        fruit.setSortedType(dto.getSortedType());
         if (dto.getConfidence() != null) fruit.setConfidence(dto.getConfidence());
         fruit.setSortedAt(LocalDateTime.now());
         fruit.setStatus("SORTED");
         fruitRepository.save(fruit);
         
         webSocketHandler.broadcastEvent(fruitMapper.toEventDTO(fruit, "sorted"));
-        broadcastStatsForBatch(fruit.getBatch());
+        broadcastCurrentStats();
     }
 
     @Transactional
     public void handleAiResponse(AiResponseDTO dto) {
         System.out.println("[AI POST LOG] Nhận dữ liệu cập nhật từ AI: " + dto);
-        Fruit fruit = fruitRepository.findById(dto.getId()).orElse(null);
         Batch batch = getCurrentBatch();
+        Fruit fruit = null;
+        if (batch != null) {
+            fruit = fruitRepository.findByEspIdAndBatch_Id(dto.getId(), batch.getId()).orElse(null);
+        }
         
         if (fruit != null) {
             fruitMapper.updateFromAiResponse(fruit, dto);
@@ -181,7 +199,7 @@ public class FruitService {
         } else {
             // Nếu không tìm thấy thì tạo mới Fruit
             fruit = new Fruit();
-            fruit.setId(dto.getId());
+            fruit.setEspId(dto.getId());
             fruit.setLabel(dto.getResult());
             fruit.setImageUrl(dto.getImageUrl());
             fruit.setConfidence(dto.getConfidence());
@@ -193,26 +211,29 @@ public class FruitService {
         }
         
         webSocketHandler.broadcastEvent(fruitMapper.toEventDTO(fruit, "classified"));
-        broadcastStatsForBatch(batch);
+        broadcastCurrentStats();
     }
 
     @Transactional
     public void handleTransfer(FruitEventDTO dto) {
-        Fruit fruit = fruitRepository.findById(dto.getId()).orElse(null);
+        Batch batch = getCurrentBatch();
+        if (batch == null) return;
+        Fruit fruit = fruitRepository.findByEspIdAndBatch_Id(dto.getId(), batch.getId()).orElse(null);
         if (fruit == null || isAlreadyProcessed(fruit, "transfer")) return;
         if (dto.getLabel() != null) fruit.setLabel(dto.getLabel());
-        if (dto.getType() != null) fruit.setSortedType(dto.getType());
+        if (dto.getSortedType() != null) fruit.setSortedType(dto.getSortedType());
         if (dto.getConfidence() != null) fruit.setConfidence(dto.getConfidence());
         fruit.setStatus("TRANSFERRED");
         fruitRepository.save(fruit);
         
         webSocketHandler.broadcastEvent(fruitMapper.toEventDTO(fruit, "transfer"));
-        broadcastStatsForBatch(fruit.getBatch());
+        broadcastCurrentStats();
     }
 
     private Map<String, Object> toFruitMap(Fruit f) {
         Map<String, Object> map = new HashMap<>();
         map.put("id", f.getId());
+        map.put("espId", f.getEspId());
         map.put("status", f.getStatus());
         
         map.put("label", f.getLabel());
@@ -220,6 +241,7 @@ public class FruitService {
         map.put("createdAt", f.getCreatedAt() != null ? f.getCreatedAt().toString() : null);
         map.put("classifiedAt", f.getClassifiedAt() != null ? f.getClassifiedAt().toString() : null);
         map.put("sortedAt", f.getSortedAt() != null ? f.getSortedAt().toString() : null);
+        map.put("batchName", f.getBatch() != null ? f.getBatch().getName() : "");
         
         String imageUrl = f.getImageUrl();
         if (imageUrl != null && !imageUrl.isEmpty()) {
