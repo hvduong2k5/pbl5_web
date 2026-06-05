@@ -37,29 +37,19 @@ public class FruitMapper {
                 }
             }
         }
-        java.time.LocalDateTime ldt = null;
-        if ("detected".equals(event)) {
-            ldt = fruit.getCreatedAt();
-        } else if ("classified".equals(event)) {
-            ldt = fruit.getClassifiedAt();
-        } else if ("sorted".equals(event)) {
-            ldt = fruit.getSortedAt();
-        } else {
-            ldt = fruit.getUpdatedAt();
-        }
-        if (ldt == null) {
-            ldt = java.time.LocalDateTime.now();
-        }
-        String timestampStr = ldt.format(java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+
 
         return FruitEventDTO.builder()
                 .event(event)
                 .id(fruit.getId())
                 .label(fruit.getLabel())
-                .type(fruit.getSortedType())
-                .image_url(imageUrl)
+                .sortedType(fruit.getSortedType())
+                .status(fruit.getStatus())
+                .imageUrl(imageUrl)
                 .confidence(fruit.getConfidence())
-                .timestamp(timestampStr)
+                .createdAt(fruit.getCreatedAt() != null ? fruit.getCreatedAt().toString() : null)
+                .classifiedAt(fruit.getClassifiedAt() != null ? fruit.getClassifiedAt().toString() : null)
+                .sortedAt(fruit.getSortedAt() != null ? fruit.getSortedAt().toString() : null)
                 .build();
     }
 

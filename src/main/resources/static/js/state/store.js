@@ -36,41 +36,35 @@ const Store = {
     },
     updateFruit(fruitEvent) {
         const id = fruitEvent.id;
+        
         if (!this.state.fruits[id]) {
-            this.state.fruits[id] = {
-                id: id,
-                status: fruitEvent.event === 'detected' ? 'DETECTED' : (fruitEvent.event === 'classified' ? 'CLASSIFIED' : (fruitEvent.event === 'transfer' ? 'TRANSFERRED' : 'SORTED')),
-                label: fruitEvent.label,
-                sortedType: fruitEvent.type,
-                createdAt: fruitEvent.timestamp,
-                imageUrl: fruitEvent.image_url,
-                confidence: fruitEvent.confidence
-            };
-        } else {
-            if (fruitEvent.status) this.state.fruits[id].status = fruitEvent.status;
-            if (fruitEvent.label) this.state.fruits[id].label = fruitEvent.label;
-            if (fruitEvent.type) this.state.fruits[id].sortedType = fruitEvent.type;
-            if (fruitEvent.image_url) this.state.fruits[id].imageUrl = fruitEvent.image_url;
-            if (fruitEvent.confidence !== undefined) this.state.fruits[id].confidence = fruitEvent.confidence;
-
-            // Map event to status to maintain consistency
-            if (fruitEvent.event === 'detected') {
-                this.state.fruits[id].status = 'DETECTED';
-            }
-            if (fruitEvent.event === 'classified') {
-                this.state.fruits[id].status = 'CLASSIFIED';
-                if (fruitEvent.timestamp) this.state.fruits[id].classifiedAt = fruitEvent.timestamp;
-            }
-            if (fruitEvent.event === 'transfer') {
-                this.state.fruits[id].status = 'TRANSFERRED';
-            }
-            if (fruitEvent.event === 'sorted') {
-                this.state.fruits[id].status = 'SORTED';
-                if (fruitEvent.timestamp) this.state.fruits[id].sortedAt = fruitEvent.timestamp;
-            }
+            this.state.fruits[id] = { id: id };
         }
+        
+        const fruit = this.state.fruits[id];
+
+        if (fruitEvent.status) fruit.status = fruitEvent.status;
+        if (fruitEvent.label) fruit.label = fruitEvent.label;
+        
+        if (fruitEvent.sortedType) fruit.sortedType = fruitEvent.sortedType;
+        if (fruitEvent.imageUrl) fruit.imageUrl = fruitEvent.imageUrl;
+        
+        if (fruitEvent.confidence !== undefined) fruit.confidence = fruitEvent.confidence;
+        
+        if (fruitEvent.createdAt) fruit.createdAt = fruitEvent.createdAt;
+        if (fruitEvent.classifiedAt) fruit.classifiedAt = fruitEvent.classifiedAt;
+        if (fruitEvent.sortedAt) fruit.sortedAt = fruitEvent.sortedAt;
+
+        // Fallback for older WebSocket events (if full status is missing)
+        if (!fruitEvent.status && fruitEvent.event) {
+            if (fruitEvent.event === 'detected') fruit.status = 'DETECTED';
+            else if (fruitEvent.event === 'classified') fruit.status = 'CLASSIFIED';
+            else if (fruitEvent.event === 'transfer') fruit.status = 'TRANSFERRED';
+            else if (fruitEvent.event === 'sorted') fruit.status = 'SORTED';
+        }
+
         if (fruitEvent.event) {
-            this.state.fruits[id].lastEvent = fruitEvent.event;
+            fruit.lastEvent = fruitEvent.event;
         }
         this.notify();
     },
