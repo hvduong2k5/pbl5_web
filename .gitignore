@@ -47,8 +47,6 @@ build/
 .DS_Store
 Thumbs.db
 
-# Ignore application properties
-application.properties
 
 # Ignore Docker files
 *.pid
