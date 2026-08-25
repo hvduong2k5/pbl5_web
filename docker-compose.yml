@@ -5,26 +5,71 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    container_name: detection_tomatoes_web
     ports:
       - "8080:8080"
+    env_file:
+      - .env
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/detection_tomatoes
-      - SPRING_DATASOURCE_USERNAME=postgres
-      - SPRING_DATASOURCE_PASSWORD=postgres
+      # Ghi đè cấu hình để trỏ tới các container nội bộ thay vì localhost
+      - DB_URL=jdbc:postgresql://db:5432/detection_tomatoes
+      - MQTT_BROKER=tcp://mqtt:1883
+      - MINIO_URL=http://minio:9000
     depends_on:
       - db
+      - mqtt
+      - minio
+    restart: unless-stopped
 
   db:
     image: postgres:15
     container_name: detection_tomatoes_db
+    env_file:
+      - .env
     environment:
-      POSTGRES_DB: detection_tomatoes
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      - POSTGRES_DB=detection_tomatoes
+      - POSTGRES_USER=${DB_USERNAME:-postgres}
+      - POSTGRES_PASSWORD=${DB_PASSWORD:-postgres}
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  mqtt:
+    image: eclipse-mosquitto:2
+    container_name: detection_tomatoes_mqtt
+    ports:
+      - "1883:1883"
+    volumes:
+      - mqtt_data:/mosquitto/data
+      - mqtt_log:/mosquitto/log
+    # Mosquitto v2+ mặc định cấm IP ngoài và bắt buộc xác thực. 
+    # Cấu hình nhanh để cho phép kết nối mọi IP và bỏ qua xác thực mật khẩu.
+    entrypoint: >
+      sh -c "echo 'listener 1883' > /mosquitto.conf &&
+      echo 'allow_anonymous true' >> /mosquitto.conf &&
+      /usr/sbin/mosquitto -c /mosquitto.conf"
+    restart: unless-stopped
+
+  minio:
+    image: minio/minio
+    container_name: detection_tomatoes_minio
+    env_file:
+      - .env
+    environment:
+      - MINIO_ROOT_USER=${MINIO_ACCESS_KEY:-minioadmin}
+      - MINIO_ROOT_PASSWORD=${MINIO_SECRET_KEY:-minioadmin}
+    command: server /data --console-address ":9001"
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio_data:/data
+    restart: unless-stopped
 
 volumes:
   postgres_data:
+  mqtt_data:
+  mqtt_log:
+  minio_data:
