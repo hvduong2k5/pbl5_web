@@ -1,170 +1,120 @@
 # Tomato Detection System
 
-Hệ thống quản lý và giám sát quy trình phân loại tự động cà chua (Tomato Detection System). Hệ thống này kết hợp với AI Camera và băng chuyền (thông qua MQTT) để cập nhật dữ liệu, hình ảnh (MinIO) và hiển thị trực tiếp (Real-time) trạng thái của trái cây trên Web Dashboard.
+Hệ thống quản lý và giám sát quy trình phân loại tự động cà chua, kết hợp Camera AI và băng chuyền phần cứng, hiển thị dữ liệu thời gian thực trên giao diện Web.
 
-## 1. Công nghệ sử dụng
-- **Backend**: Java 17, Spring Boot, Spring Data JPA, WebSocket, Spring Security (JWT, RBAC).
-- **Frontend**: HTML, CSS, JavaScript (Vanilla, Fetch API, WebSocket). Giao diện Responsive UI tương thích cả Desktop và Mobile.
-- **Database**: PostgreSQL.
-- **Message Broker**: MQTT.
-- **Storage**: MinIO (lưu trữ hình ảnh từ AI Camera).
-- **Deployment**: Docker & Docker Compose.
+## 1. Tính Năng Chính
+- **Giám Sát Thời Gian Thực (Real-time Dashboard)**: Truyền dữ liệu cảm biến và kết quả AI lên giao diện Web thông qua WebSocket.
+- **Quản Lý Mẻ Thu Hoạch (Batch Management)**: Lưu trữ thống kê số lượng quả Chín/Xanh/Lỗi theo từng lô.
+- **Tích Hợp AI & IoT**: Nhận tín hiệu điều khiển từ vi điều khiển (ESP32/PLC) qua MQTT Broker và nhận dữ liệu phân loại hình ảnh qua REST API/MQTT.
+- **Lưu Trữ Hình Ảnh**: Lưu trữ ảnh gốc từ Camera AI lên MinIO (S3-compatible Storage).
+- **Trích Xuất Dữ Liệu**: Xuất báo cáo thống kê và danh sách trái cây ra file Excel bằng thư viện EasyExcel.
+- **Tối Ưu Hiệu Năng (Caching)**: Sử dụng Caffeine Cache cho xác thực người dùng và phân quyền, giảm truy vấn cơ sở dữ liệu.
 
----
+## 2. Công Nghệ Sử Dụng
 
-## 2. Yêu cầu hệ thống (Prerequisites)
-Để chạy dự án, máy tính của bạn cần cài đặt sẵn:
-- **Java**: JDK 17 trở lên.
-- **Docker** & **Docker Compose** (Dành cho việc chạy nhanh các dịch vụ phụ trợ như DB, MinIO, MQTT).
-- **Maven**: 3.8.1 trở lên.
+### Backend
+- Java 17, Spring Boot 3
+- Spring Security, JWT, Spring Data JPA, Hibernate
+- Eclipse Paho (MQTT), Spring WebSockets, Caffeine Cache
+- MinIO SDK, Alibaba EasyExcel
 
-### Hướng dẫn cài đặt Maven chi tiết
+### Cơ Sở Hạ Tầng (Infrastructure)
+- PostgreSQL
+- Eclipse Mosquitto (MQTT)
+- MinIO
+- Docker & Docker Compose
 
-**Đối với Windows:**
-1. Truy cập trang chủ Maven: [https://maven.apache.org/download.cgi](https://maven.apache.org/download.cgi)
-2. Tải xuống file nén `Binary zip archive` (ví dụ: `apache-maven-3.9.6-bin.zip`).
-3. Giải nén file vừa tải vào một thư mục cố định trên máy (ví dụ: `C:\Program Files\apache-maven-3.9.6`).
-4. Thiết lập biến môi trường (Environment Variables):
-   - Mở Start Menu, gõ **Environment Variables** và chọn *Edit the system environment variables*.
-   - Bấm nút **Environment Variables...**.
-   - Ở phần *System variables*, bấm **New...** tạo biến mới:
-     - Variable name: `M2_HOME`
-     - Variable value: `C:\Program Files\apache-maven-3.9.6`
-   - Tìm biến `Path` trong danh sách *System variables*, chọn **Edit** -> **New** và thêm dòng: `%M2_HOME%\bin`
-   - Nhấn OK để lưu tất cả.
-5. Kiểm tra lại bằng cách mở Command Prompt (cmd) và gõ:
-   ```cmd
-   mvn -v
-   ```
-   *(Nếu hiện ra phiên bản Maven và Java là thành công).*
+### Kiểm Thử (Testing)
+- JUnit 5, Mockito, Spring Boot Test (Độ phủ 100% tầng Service và Controller)
 
-**Đối với macOS (dùng Homebrew):**
-Mở Terminal và chạy lệnh:
+## 3. Yêu Cầu Môi Trường
+- Java: JDK 17 trở lên.
+- Maven: 3.8.1 trở lên.
+- Docker & Docker Compose (khuyến nghị dùng để khởi chạy các dịch vụ DB, MinIO, MQTT).
+
+## 4. Hướng Dẫn Cài Đặt và Khởi Chạy
+
+### 4.1. Cấu Hình
+Ứng dụng sử dụng biến môi trường. Tạo file `.env` tại thư mục gốc (nơi chứa file `docker-compose.yml` hoặc `pom.xml`) với nội dung:
+
+```env
+# Cấu hình PostgreSQL
+DB_URL=jdbc:postgresql://localhost:5432/detection_tomatoes
+DB_USERNAME=postgres
+DB_PASSWORD=postgres
+
+# Cấu hình MinIO
+MINIO_URL=http://localhost:9000
+MINIO_ACCESS_KEY=minioadmin
+MINIO_SECRET_KEY=minioadmin
+MINIO_BUCKET_NAME=tomatoes
+
+# Cấu hình MQTT
+MQTT_BROKER=tcp://localhost:1883
+MQTT_USERNAME=admin
+MQTT_PASSWORD=admin
+MQTT_TOPIC_SUBSCRIBE=tomato/events
+MQTT_TOPIC_PUBLISH=tomato/control
+
+# Cấu hình Security (JWT)
+JWT_SECRET=my-very-secure-secret-key-1234567890
+JWT_EXPIRATION=2592000000
+```
+
+### 4.2. Khởi Chạy Hệ Thống
+
+**Khởi chạy bằng Docker Compose:**
+Cần có sẵn file `docker-compose.yml` chứa DB, MinIO, MQTT.
 ```bash
-brew install maven
+mvn clean package -DskipTests
+docker-compose up --build -d
+docker-compose logs -f
 ```
-Kiểm tra lại: `mvn -v`
 
-**Đối với Linux (Ubuntu/Debian):**
-Mở Terminal và chạy lệnh:
+**Khởi chạy môi trường phát triển (Dev Mode):**
+Yêu cầu đã bật PostgreSQL, MQTT và MinIO ở môi trường local.
 ```bash
-sudo apt update
-sudo apt install maven
+mvn clean spring-boot:run
 ```
-Kiểm tra lại: `mvn -v`
 
----
+## 5. Phân Quyền và Bảo Mật (RBAC)
 
-## 3. Cấu hình ứng dụng
+Hệ thống sử dụng JWT để xác thực và phân quyền.
 
-Ứng dụng đọc cấu hình từ file `application.properties` (hoặc `application.yml`) nằm trong thư mục `src/main/resources/`. 
-
-Dưới đây là các thông số quan trọng cần thiết lập để hệ thống kết nối thành công với các dịch vụ bên ngoài:
-
-```properties
-# 1. Cấu hình Cơ sở dữ liệu PostgreSQL
-spring.datasource.url=jdbc:postgresql://localhost:5432/detection_tomatoes
-spring.datasource.username=postgres
-spring.datasource.password=postgres
-
-# 2. Cấu hình MinIO (Lưu ảnh AI)
-minio.url=http://localhost:9000
-minio.access-key=minioadmin
-minio.secret-key=minioadmin
-minio.bucket-name=tomatoes
-
-# 3. Cấu hình MQTT Broker (Nhận tín hiệu băng chuyền/AI)
-mqtt.broker-url=tcp://localhost:1883
-mqtt.username=admin
-mqtt.password=admin
-mqtt.topic.subscribe=tomato/events
+### Authentication
+API Đăng nhập: `POST /api/auth/login`
+```json
+{
+    "username": "admin",
+    "password": "123456"
+}
 ```
-*(Nếu bạn sử dụng Docker Compose để chạy toàn bộ, hãy đổi `localhost` thành tên các container tương ứng như `db`, `minio`, `mqtt`).*
+Lấy `accessToken` từ phản hồi và gắn vào HTTP Header `Authorization: Bearer <Token>`.
 
----
+### Authorization
+- `CONTROL_SYSTEM`: Quyền điều khiển băng chuyền.
+- `MANAGE_BATCH`: Quyền tạo và quản lý lô hàng.
+- `EXPORT_DATA`: Quyền xuất dữ liệu Excel.
+- `VIEW_HISTORY`: Quyền xem lịch sử phân loại.
 
-## 4. Hướng dẫn chạy dự án
+## 6. Giao Tiếp Phần Cứng (Hardware Integration)
 
-Có 2 cách để chạy hệ thống:
+Phần cứng giao tiếp qua MQTT.
+Topic: `tomato/events`
+Cấu trúc Payload mẫu:
+```json
+{
+    "event": "detected", 
+    "id": "esp32_cam_001",
+    "label": "RIPE",
+    "image_url": "http://192.168.1.166:9000/tomatoes/img_123.jpg",
+    "confidence": 0.98,
+    "timestamp": "2026-08-25 10:42:10"
+}
+```
 
-### Cách 1: Chạy trực tiếp bằng Maven (Dành cho Dev)
-Nếu bạn đã tự cài đặt và chạy PostgreSQL, MinIO, và MQTT trên máy cá nhân:
-1. Mở Terminal (hoặc CMD) tại thư mục gốc của project (nơi chứa file `pom.xml`).
-2. Build và chạy ứng dụng Spring Boot:
-   ```bash
-   mvn clean spring-boot:run
-   ```
-
-### Cách 2: Chạy toàn bộ hệ thống bằng Docker Compose (Khuyên dùng)
-Nếu file `docker-compose.yml` của bạn đã định nghĩa đầy đủ các services (Spring Boot, DB, MQTT, MinIO):
-1. Build file JAR của Backend trước (bỏ qua Test để build nhanh):
-   ```bash
-   mvn clean package -DskipTests
-   ```
-2. Khởi chạy toàn bộ hệ thống bằng Docker Compose:
-   ```bash
-   docker-compose up --build -d
-   ```
-3. Xem log của hệ thống để đảm bảo mọi thứ hoạt động ổn định:
-   ```bash
-   docker-compose logs -f
-   ```
-4. Để tắt hệ thống, chạy lệnh:
-   ```bash
-   docker-compose down
-   ```
-
----
-
-## 5. Phân quyền và Bảo mật (RBAC & JWT)
-
-Hệ thống sử dụng **JWT (JSON Web Token)** để bảo mật không trạng thái (stateless) kết hợp với mô hình phân quyền **RBAC (Role-Based Access Control)**.
-
-### Cách lấy Token
-- Gửi request `POST /api/auth/login` với body JSON chứa thông tin tài khoản mặc định (đã được tạo sẵn trong `data.sql`):
-  ```json
-  {
-      "username": "admin",
-      "password": "123456"
-  }
-  ```
-- Hệ thống trả về `accessToken`. Đưa token này vào header `Authorization: Bearer <token>` để truy cập các API bị khóa.
-
-### Các quyền (Permissions) hoạt động:
-Một số API nhạy cảm yêu cầu User gửi kèm Token có chứa quyền tương ứng:
-- **`CONTROL_SYSTEM`**: Dùng để điều khiển băng chuyền (Start/Stop).
-- **`MANAGE_BATCH`**: Dùng để tạo các mẻ (Batch) cà chua mới.
-- **`EXPORT_DATA`**: Dùng để trích xuất file Excel thông tin các quả cà chua.
-
----
-
-## 6. Giao diện và Giao thức kết nối
- 
- 1. **Dashboard Giám sát Thời gian thực (Home Page)**
-    - Truy cập: `http://localhost:8080/`
-    - Giao diện thân thiện tương thích trên mọi thiết bị (Responsive).
-    - Hiển thị trực tiếp quá trình quả chạy qua các trạm trên băng chuyền (Phát hiện -> Chuyển -> Phân loại -> Vào hộp).
- 
- 2. **Lịch sử dữ liệu (History Page)**
-    - Truy cập: `http://localhost:8080/history.html`
-    - Thống kê dạng bảng chi tiết các trái cà chua đã quét theo từng mẻ (Batch).
- 
- 3. **Quản lý người dùng và Quyền (Admin Page)**
-    - Giao diện Admin quản lý tài khoản và phân quyền cho hệ thống.
-
- 4. **Giao thức Nhận dữ liệu (Dành cho AI Camera & ESP32)**
-    - Dữ liệu được gửi hoàn toàn qua **MQTT**.
-    - Topic: `tomato/events`
-    - Payload mẫu (Định dạng JSON gửi từ Camera hoặc Vi điều khiển):
-      ```json
-      {
-          "event": "detected", // Các sự kiện: detected, classified, transfer, sorted, status
-          "id": "6453745",
-          "label": "RIPE",
-          "type": null,
-          "image_url": "http://192.168.1.166:9000/tomatoes/6453745.jpg",
-          "confidence": 0.95,
-          "timestamp": "2026-06-03 22:42:10"
-      }
-      ```
-    - Khi có sự kiện `status`, hệ thống cập nhật trạng thái hoạt động (VD: `Running`, `Stopped`) của băng chuyền lên giao diện thông qua WebSocket.
+## 7. Chạy Kiểm Thử (Unit Testing)
+Hệ thống tích hợp bộ unit test độc lập không phụ thuộc vào hạ tầng thật.
+```bash
+mvn test
+```
