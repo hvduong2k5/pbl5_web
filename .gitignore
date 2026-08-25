@@ -29,7 +29,7 @@ target/
 *.temp
 
 *.ipr
-*.properties
+.env
 
 ### NetBeans ###
 /nbproject/private/
