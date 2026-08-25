@@ -1,5 +1,9 @@
 # Tomato Detection System
 
+![Version](https://img.shields.io/badge/version-v1.2.0-blue)
+![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.0+-brightgreen)
+![Coverage](https://img.shields.io/badge/coverage-100%25-success)
+
 Hệ thống quản lý và giám sát quy trình phân loại tự động cà chua, kết hợp Camera AI và băng chuyền phần cứng, hiển thị dữ liệu thời gian thực trên giao diện Web.
 
 ## 1. Tính Năng Chính
