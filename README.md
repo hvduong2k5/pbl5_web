@@ -63,16 +63,19 @@ JWT_EXPIRATION=2592000000
 
 ### 4.2. Khởi Chạy Hệ Thống
 
-**Khởi chạy bằng Docker Compose:**
-Cần có sẵn file `docker-compose.yml` chứa DB, MinIO, MQTT.
+**Cách 1: Khởi chạy bằng Docker Compose (All-in-One):**
+Dự án được cấu hình sẵn để chạy toàn bộ hệ thống (Web Backend, PostgreSQL, MQTT Broker, MinIO) chỉ bằng một lệnh duy nhất.
 ```bash
+# Build mã nguồn và đóng gói
 mvn clean package -DskipTests
+# Khởi chạy toàn bộ hệ thống
 docker-compose up --build -d
+# Kiểm tra log nếu cần
 docker-compose logs -f
 ```
 
-**Khởi chạy môi trường phát triển (Dev Mode):**
-Yêu cầu đã bật PostgreSQL, MQTT và MinIO ở môi trường local.
+**Cách 2: Khởi chạy môi trường phát triển (Dev Mode):**
+Dành cho lập trình viên cần debug. Yêu cầu tự bật các container phụ trợ (DB, MQTT, MinIO) qua file docker-compose, sau đó chạy ứng dụng Web độc lập:
 ```bash
 mvn clean spring-boot:run
 ```
