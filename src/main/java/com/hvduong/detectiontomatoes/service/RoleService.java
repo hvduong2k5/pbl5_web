@@ -10,6 +10,7 @@ import com.hvduong.detectiontomatoes.repository.PermissionRepository;
 import com.hvduong.detectiontomatoes.repository.RoleRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -64,6 +65,7 @@ public class RoleService {
     }
 
     @Transactional
+    @CacheEvict(value = "userDetails", allEntries = true)
     public RoleResponseDTO updateRole(Integer id, RoleUpdateDTO dto) {
         Role role = roleRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy Role với ID: " + id));
@@ -97,6 +99,7 @@ public class RoleService {
     }
 
     @Transactional
+    @CacheEvict(value = "userDetails", allEntries = true)
     public void deleteRole(Integer id) {
         Role role = roleRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy Role với ID: " + id));

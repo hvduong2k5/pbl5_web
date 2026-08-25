@@ -11,11 +11,11 @@ import com.hvduong.detectiontomatoes.repository.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -25,11 +25,13 @@ public class UserService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
+    private final CacheManager cacheManager;
 
-    public UserService(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder, CacheManager cacheManager) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
+        this.cacheManager = cacheManager;
     }
 
     private UserResponseDTO mapToResponse(User user) {
@@ -105,6 +107,9 @@ public class UserService {
         }
 
         User updatedUser = userRepository.save(user);
+        if (cacheManager.getCache("userDetails") != null) {
+            cacheManager.getCache("userDetails").evict(updatedUser.getUsername());
+        }
         return mapToResponse(updatedUser);
     }
 
@@ -129,6 +134,9 @@ public class UserService {
         user.setRoles(roles);
 
         User updatedUser = userRepository.save(user);
+        if (cacheManager.getCache("userDetails") != null) {
+            cacheManager.getCache("userDetails").evict(updatedUser.getUsername());
+        }
         return mapToResponse(updatedUser);
     }
 
@@ -142,5 +150,8 @@ public class UserService {
         }
 
         userRepository.deleteById(id);
+        if (cacheManager.getCache("userDetails") != null) {
+            cacheManager.getCache("userDetails").evict(user.getUsername());
+        }
     }
 }
